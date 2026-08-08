@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { PlaceholderScreen as DashboardScreen } from '@/features/dashboard';
+import { DashboardScreen } from '@/features/dashboard';
 import { PlaceholderScreen as ProgressScreen } from '@/features/exercises';
 import {
   ExerciseCatalogScreen,

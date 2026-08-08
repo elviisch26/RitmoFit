@@ -1,5 +1,11 @@
 import 'react-native-gesture-handler/jestSetup';
 
+// Reanimated v4 depends on react-native-worklets at runtime. Its mock is not
+// exposed as a package subpath, so require it from lib/module directly.
+jest.mock('react-native-worklets', () =>
+  require('react-native-worklets/lib/module/mock'),
+);
+
 jest.mock('react-native-reanimated', () =>
   require('react-native-reanimated/mock'),
 );

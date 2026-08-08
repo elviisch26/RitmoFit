@@ -28,6 +28,13 @@ describe('RitmoFit App', () => {
     expect(screen.getByRole('header', { name: 'Inicio' })).toBeOnTheScreen();
   });
 
+  it('renders the Dashboard empty state with zero workouts (DASHBOARD-4)', async () => {
+    await render(<App />);
+
+    expect(await screen.findByText('Todavía no registraste entrenamientos')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Crear mi primera rutina' })).toBeOnTheScreen();
+  });
+
   it('renders all four tab bar buttons', async () => {
     await render(<App />);
 
