@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { DashboardScreen } from '@/features/dashboard';
-import { PlaceholderScreen as ProgressScreen } from '@/features/exercises';
+import { ProgressScreen } from '@/features/progress';
 import {
   ExerciseCatalogScreen,
 } from '@/features/exercises/screens/ExerciseCatalogScreen';

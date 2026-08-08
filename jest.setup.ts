@@ -10,6 +10,15 @@ jest.mock('react-native-reanimated', () =>
   require('react-native-reanimated/mock'),
 );
 
+// react-native-gifted-charts ships pre-transpiled ESM in `dist` and is NOT in
+// jest-expo's transformIgnorePatterns whitelist, so the real module cannot be
+// loaded under jest (App.test mounts the navigator graph that imports it).
+// Features mock it per-file to capture LineChart props; this global mock
+// keeps the rest of the suite green.
+jest.mock('react-native-gifted-charts', () => ({
+  LineChart: jest.fn(() => null),
+}));
+
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   const actual = jest.requireActual('react-native-safe-area-context');
