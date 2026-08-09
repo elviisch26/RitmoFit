@@ -1,1 +1,1 @@
-export {};
+export { useReminderConfig } from './useReminderConfig';

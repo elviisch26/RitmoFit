@@ -1,1 +1,1 @@
-export {};
+export { useNotificationStore } from './notificationStore';
