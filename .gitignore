@@ -44,3 +44,6 @@ yarn-error.*
 *.sqlite
 *.sqlite3
 *.db
+
+# agent tooling
+.atl/
