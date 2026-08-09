@@ -7,7 +7,7 @@ import { ProgressScreen } from '@/features/progress';
 import {
   ExerciseCatalogScreen,
 } from '@/features/exercises/screens/ExerciseCatalogScreen';
-import { PlaceholderScreen as SettingsScreen } from '@/features/settings';
+import { NotificationSettingsScreen } from '@/features/notifications';
 import {
   RoutineFormScreen,
   RoutinesScreen,
@@ -99,7 +99,11 @@ export function RootNavigator() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ tabBarLabel: 'Inicio' }} />
       <Tab.Screen name="Workouts" component={WorkoutsStackNavigator} options={{ tabBarLabel: 'Rutinas' }} />
       <Tab.Screen name="Progress" component={ProgressScreen} options={{ tabBarLabel: 'Progreso' }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarLabel: 'Ajustes' }} />
+      <Tab.Screen
+        name="Settings"
+        component={NotificationSettingsScreen}
+        options={{ tabBarLabel: 'Ajustes' }}
+      />
     </Tab.Navigator>
   );
 }

@@ -1,1 +1,1 @@
-export {};
+export { NotificationSettingsScreen } from './NotificationSettingsScreen';
