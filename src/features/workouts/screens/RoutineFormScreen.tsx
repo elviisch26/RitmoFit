@@ -105,7 +105,6 @@ export function RoutineFormScreen() {
 
   const {
     control,
-    register,
     handleSubmit,
     reset,
     setValue,
@@ -210,23 +209,39 @@ export function RoutineFormScreen() {
     >
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.body}>
         <Text style={styles.label}>Nombre</Text>
-        <TextInput
-          accessibilityLabel="Nombre de la rutina"
-          placeholder="Nombre de la rutina"
-          placeholderTextColor={colors.textMuted}
-          style={[styles.textInput, errors.name != null && styles.textInputError]}
-          {...register('name')}
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { value, onChange }, fieldState: { error } }) => (
+            <>
+              <TextInput
+                accessibilityLabel="Nombre de la rutina"
+                placeholder="Nombre de la rutina"
+                placeholderTextColor={colors.textMuted}
+                value={typeof value === 'string' ? value : ''}
+                onChangeText={onChange}
+                style={[styles.textInput, error != null && styles.textInputError]}
+              />
+              {error != null ? <Text style={styles.fieldError}>{error.message}</Text> : null}
+            </>
+          )}
         />
-        {errors.name != null ? <Text style={styles.fieldError}>{errors.name.message}</Text> : null}
 
         <Text style={styles.label}>Nota (opcional)</Text>
-        <TextInput
-          accessibilityLabel="Nota de la rutina"
-          placeholder="Nota opcional"
-          placeholderTextColor={colors.textMuted}
-          multiline
-          style={[styles.textInput, styles.noteInput]}
-          {...register('note')}
+        <Controller
+          control={control}
+          name="note"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              accessibilityLabel="Nota de la rutina"
+              placeholder="Nota opcional"
+              placeholderTextColor={colors.textMuted}
+              value={typeof value === 'string' ? value : ''}
+              onChangeText={onChange}
+              multiline
+              style={[styles.textInput, styles.noteInput]}
+            />
+          )}
         />
 
         <Text style={styles.exercisesHeading}>Ejercicios</Text>
