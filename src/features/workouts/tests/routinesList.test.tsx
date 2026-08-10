@@ -32,7 +32,7 @@ jest.mock('@react-navigation/native', () => {
   return {
     ...actual,
     useNavigation: () => ({
-      navigate: jest.fn(),
+      navigate: mockNavigate,
       setOptions: jest.fn(),
       goBack: jest.fn(),
     }),
@@ -46,6 +46,8 @@ import {
 
 const mockListRoutines = listRoutines as jest.MockedFunction<typeof listRoutines>;
 const mockDeleteRoutine = deleteRoutine as jest.MockedFunction<typeof deleteRoutine>;
+
+const mockNavigate = jest.fn();
 
 const EXERCISE = {
   id: 10,
@@ -121,6 +123,17 @@ describe('RoutinesScreen', () => {
     await renderRoutines();
 
     expect(await screen.findByText(/Aún no hay rutinas/i)).toBeOnTheScreen();
+  });
+
+  it('offers a way to create a routine when the list is empty', async () => {
+    mockListRoutines.mockResolvedValue([]);
+
+    await renderRoutines();
+
+    await screen.findByText(/Aún no hay rutinas/i);
+
+    fireEvent.press(screen.getByText('Nueva rutina'));
+    expect(mockNavigate).toHaveBeenCalledWith('RoutineForm');
   });
 
   it('shows a no-match message when the search phrase excludes everything', async () => {

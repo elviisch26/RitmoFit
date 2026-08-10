@@ -182,13 +182,21 @@ export function RoutinesScreen() {
       </View>
     );
   } else if (filtered.length === 0) {
+    const emptyMessage =
+      (routines?.length ?? 0) === 0
+        ? 'Aún no hay rutinas.'
+        : 'Ninguna rutina coincide con tu búsqueda.';
     content = (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>
-          {(routines?.length ?? 0) === 0
-            ? 'Aún no hay rutinas.'
-            : 'Ninguna rutina coincide con tu búsqueda.'}
-        </Text>
+        <Text style={styles.emptyText}>{emptyMessage}</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('RoutineForm')}
+          style={styles.emptyAddButton}
+        >
+          <Ionicons name="add" size={20} color={colors.background} />
+          <Text style={styles.addButtonLabel}>Nueva rutina</Text>
+        </Pressable>
       </View>
     );
   } else {
@@ -365,6 +373,18 @@ const styles = StyleSheet.create({
   },
   centered: {
     marginTop: spacing.xl,
+    alignItems: 'center',
+  },
+  emptyAddButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.primary,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.md,
   },
   emptyText: {
     color: colors.textMuted,
