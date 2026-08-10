@@ -73,6 +73,6 @@ describe('DashboardScreen (DASHBOARD-4/5/6)', () => {
 
     await fireEvent.press(screen.getByRole('button', { name: 'Crear mi primera rutina' }));
 
-    expect(mockNavigateSpy).toHaveBeenCalledWith('RoutinesList');
+    expect(mockNavigateSpy).toHaveBeenCalledWith('Workouts', { screen: 'RoutinesList' });
   });
 });

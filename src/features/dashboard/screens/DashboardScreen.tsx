@@ -1,15 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
-import type { NavigationProp } from '@react-navigation/native';
+import type { NavigationProp, NavigatorScreenParams } from '@react-navigation/native';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import type { RootTabParamList } from '@/app/navigation';
+import type { RootTabParamList, WorkoutsStackParamList } from '@/app/navigation';
 import { ScreenContainer } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 
 import { EmptyState, KpiCard, StreakBadge } from '../components';
 import { useDashboardSummary } from '../hooks/useDashboardSummary';
 
-type DashboardNavigation = NavigationProp<RootTabParamList & { RoutinesList: undefined }>;
+type DashboardNavigation = NavigationProp<
+  Omit<RootTabParamList, 'Workouts'> & {
+    Workouts: NavigatorScreenParams<WorkoutsStackParamList>;
+  }
+>;
 
 /**
  * Real dashboard home (DASHBOARD-4/5/6): weekly KPIs plus the animated streak
@@ -36,7 +40,7 @@ export function DashboardScreen() {
         <EmptyState
           title="Todavía no registraste entrenamientos"
           ctaLabel="Crear mi primera rutina"
-          onCtaPress={() => navigation.navigate('RoutinesList')}
+          onCtaPress={() => navigation.navigate('Workouts', { screen: 'RoutinesList' })}
         />
       </ScreenContainer>
     );
