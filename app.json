@@ -2,6 +2,7 @@
   "expo": {
     "name": "RitmoFit",
     "slug": "ritmofit",
+    "owner": "elviisch26",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,6 +11,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.elviisch26.ritmofit",
       "adaptiveIcon": {
         "backgroundColor": "#0B0E11",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -31,6 +33,11 @@
       ],
       "expo-asset",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f0008ff9-3ebd-400e-b91d-d7cb6df0a682"
+      }
+    }
   }
 }
