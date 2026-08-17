@@ -1,9 +1,10 @@
 import type { ReminderType } from '../types';
 
 /**
- * Pure resolver of the next local occurrence for a reminder (REMINDERS-6).
- * Today at hour:minute when that instant is still ahead of `now`, otherwise
- * the same time tomorrow. Equal instants roll to tomorrow (D6 injectable clock).
+ * Resolvedor puro de la próxima ocurrencia local de un recordatorio (REMINDERS-6).
+ * Hoy a hour:minute cuando ese instante todavía está por delante de `now`, en
+ * caso contrario la misma hora mañana. Los instantes iguales pasan a mañana
+ * (D6: reloj inyectable).
  */
 export function resolveNextOccurrence(
   _type: ReminderType,

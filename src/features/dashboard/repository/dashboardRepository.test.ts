@@ -7,12 +7,12 @@ jest.mock('expo-sqlite', () => {
 
 import { getDashboardSummary } from './dashboardRepository';
 
-/** Local millis helper. */
+/** Helper de millis locales. */
 function at(year: number, month: number, day: number, hour = 12): number {
   return new Date(year, month - 1, day, hour, 0, 0, 0).getTime();
 }
 
-const NOW = new Date(2026, 0, 15, 10, 0, 0); // Thursday Jan 15 2026 (local)
+const NOW = new Date(2026, 0, 15, 10, 0, 0); // Jueves 15 de enero de 2026 (local)
 
 describe('dashboardRepository', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('dashboardRepository', () => {
     });
     expoSqliteMock.rule({
       match: /from "workouts"/,
-      rows: [[at(2026, 1, 13, 10)], [at(2026, 1, 14, 11)]], // Tue + Wed, no workout today
+      rows: [[at(2026, 1, 13, 10)], [at(2026, 1, 14, 11)]], // Mar + Mié, sin entrenamiento hoy
     });
 
     const summary = await getDashboardSummary(NOW);

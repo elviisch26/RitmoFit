@@ -27,7 +27,7 @@ function formatTime(hour: number, minute: number): string {
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
-/** One reminder type row: a11y switch + editable time (opens the TimePickerModal). */
+/** Una fila por tipo de recordatorio: switch a11y + hora editable (abre el TimePickerModal). */
 function ReminderRow({
   config,
   defaultEnabled,
@@ -65,7 +65,7 @@ function ReminderRow({
   );
 }
 
-/** System-settings deep link shown when the permission was denied (REMINDERS-3). */
+/** Deep link a los ajustes del sistema mostrado cuando el permiso fue denegado (REMINDERS-3). */
 function PermissionWarning({ onOpenSettings }: { onOpenSettings: () => void }) {
   return (
     <View style={styles.warning} accessibilityRole="alert">
@@ -98,14 +98,14 @@ export function NotificationSettingsScreen() {
     }
   }, [data, syncFromDb]);
 
-  // DB is the source of truth; the zustand cache only mirrors the last snapshot.
+  // La DB es la fuente de verdad; la caché de zustand solo refleja la última snapshot.
   const configs: ReminderConfig[] = reminders.length > 0 ? reminders : (data ?? []);
   const picking = pickingType ? configs.find((config) => config.type === pickingType) : null;
 
   const handleToggle = async (config: ReminderConfig, enabled: boolean) => {
     const now = new Date();
     if (enabled) {
-      // REMINDERS-3: ask for runtime permission on the first opt-in.
+      // REMINDERS-3: pedir permiso en runtime en el primer opt-in.
       const permission = await Notifications.requestPermissionsAsync();
       const granted = permission.status === PermissionStatus.GRANTED;
       await activateReminder(config.type, config.hour, config.minute, now);
@@ -118,7 +118,7 @@ export function NotificationSettingsScreen() {
       } else {
         setPermissionDenied(true);
       }
-      // Visual state stays configured even when denied (REMINDERS-3).
+      // El estado visual permanece configurado incluso cuando se deniega (REMINDERS-3).
       setReminderConfig({ ...config, enabled: true });
     } else {
       await cancelScheduledReminder(config.type);
@@ -133,7 +133,7 @@ export function NotificationSettingsScreen() {
     }
     const now = new Date();
     const next = resolveNextOccurrence(picking.type, hour, minute, now);
-    // REMINDERS-4: persist the new occurrence and reconcile the local schedule.
+    // REMINDERS-4: persistir la nueva ocurrencia y reconciliar la programación local.
     if (picking.enabled) {
       await reactivateReminder(picking.type, hour, minute, now);
       await cancelScheduledReminder(picking.type);

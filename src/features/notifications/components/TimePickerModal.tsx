@@ -26,7 +26,7 @@ function range(min: number, max: number, step: number): number[] {
   return values;
 }
 
-/** Two-column time picker (hour 0-23, minute 0-55 step 15) after ExercisePickerModal. */
+/** Selector de hora de dos columnas (hora 0-23, minuto 0-55 paso 15) siguiendo a ExercisePickerModal. */
 export function TimePickerModal({
   visible,
   initialHour,

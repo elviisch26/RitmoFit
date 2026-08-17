@@ -5,6 +5,7 @@ export {
   useUpdateRoutine,
   useDeleteRoutine,
   useDuplicateRoutine,
+  useSeedExampleRoutines,
 } from './useRoutines';
 
 export {

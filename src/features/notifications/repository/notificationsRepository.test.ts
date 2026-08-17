@@ -14,7 +14,7 @@ import {
   reactivateReminder,
 } from './notificationsRepository';
 
-const TUE_10 = new Date(2026, 2, 17, 10, 0, 0); // Tuesday Mar 17 2026, 10:00 local
+const TUE_10 = new Date(2026, 2, 17, 10, 0, 0); // Martes 17 de marzo de 2026, 10:00 local
 const TUE_14 = new Date(2026, 2, 17, 14, 0, 0);
 
 function row(
@@ -105,8 +105,9 @@ describe('notificationsRepository', () => {
       'rest',
       'workout_reminder',
     ]);
-    // scheduledFor = next occurrence from the injected clock (Mar 17 22:45, still ahead of 10:00),
-    // bound as epoch millis by the timestamp_ms column mode.
+    // scheduledFor = próxima ocurrencia desde el reloj inyectado (17 mar 22:45, todavía
+    // por delante de las 10:00), expresada en millis epoch por el modo de columna
+    // timestamp_ms.
     const rest = inserts.find((call) => call.params[0] === 'rest');
     expect(rest?.params[3]).toBe(new Date(2026, 2, 17, 22, 45, 0, 0).getTime());
     expect(rest?.params[4]).toBe('scheduled');
@@ -128,8 +129,8 @@ describe('notificationsRepository', () => {
     expect(expoSqliteMock.callsMatching(/insert into "notifications"/, 'run')).toHaveLength(0);
     const updates = expoSqliteMock.callsMatching(/update "notifications"/, 'run');
     expect(updates).toHaveLength(1);
-    // update set order: title, body, scheduled_for, status, updated_at.
-    // now = Mar 17 14:00, hour 15:30 still ahead → next occurrence today.
+    // Orden del update set: title, body, scheduled_for, status, updated_at.
+    // now = 17 mar 14:00, hora 15:30 todavía por delante → próxima ocurrencia hoy.
     expect(updates[0].params[2]).toBe(new Date(2026, 2, 17, 15, 30, 0, 0).getTime());
     expect(updates[0].params[3]).toBe('scheduled');
   });

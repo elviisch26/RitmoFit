@@ -8,6 +8,8 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/sqlite-core';
 
+import { GOALS } from '@/shared/constants';
+
 export const users = sqliteTable(
   'users',
   {
@@ -143,6 +145,7 @@ export const routines = sqliteTable('routines', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   note: text('note'),
+  goal: text('goal', { enum: GOALS }).notNull().default('strength'),
   createdAt: integer('created_at', { mode: 'timestamp_ms' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -150,6 +153,8 @@ export const routines = sqliteTable('routines', {
     .notNull()
     .$defaultFn(() => new Date()),
 });
+
+export type Goal = (typeof routines.$inferSelect)['goal'];
 
 export const routineExercises = sqliteTable(
   'routine_exercises',

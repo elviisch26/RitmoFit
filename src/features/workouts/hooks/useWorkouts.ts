@@ -16,7 +16,7 @@ import type { AddSetInput, UpdateSetInput } from '../types';
 const WORKOUTS_KEY = ['workouts'] as const;
 const WORKOUT_EXERCISES_KEY = ['workout-exercises'] as const;
 
-/** All workouts ordered by most recent start. */
+/** Todos los entrenamientos ordenados por inicio más reciente. */
 export function useWorkouts() {
   return useQuery({
     queryKey: WORKOUTS_KEY,
@@ -24,7 +24,7 @@ export function useWorkouts() {
   });
 }
 
-/** A single workout by id; disabled when no id is provided. */
+/** Un entrenamiento por id; deshabilitado cuando no se provee id. */
 export function useWorkout(workoutId: number | undefined) {
   return useQuery({
     queryKey: [...WORKOUTS_KEY, workoutId],
@@ -33,7 +33,7 @@ export function useWorkout(workoutId: number | undefined) {
   });
 }
 
-/** Exercises (with their sets) for a workout; disabled when no id is provided. */
+/** Ejercicios (con sus series) de un entrenamiento; deshabilitado cuando no se provee id. */
 export function useWorkoutExercises(workoutId: number | undefined) {
   return useQuery({
     queryKey: [...WORKOUT_EXERCISES_KEY, workoutId],

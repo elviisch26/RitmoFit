@@ -1,7 +1,7 @@
 /**
- * Shared types for the Progress feature. `LoadPoint` mirrors the shape
- * produced by `statisticsRepository.getLoadSeries` so the thin wrapper stays
- * type-compatible with the aggregated queries (D1).
+ * Tipos compartidos de la feature Progreso. `LoadPoint` refleja la forma que
+ * produce `statisticsRepository.getLoadSeries` para que el wrapper fino siga
+ * siendo compatible en tipos con las consultas agregadas (D1).
  */
 export type LoadPoint = {
   date: string;

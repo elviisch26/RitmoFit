@@ -9,9 +9,10 @@ import { LoadChart } from '../components/LoadChart';
 import { useProgressStats } from '../hooks/useProgressStats';
 
 /**
- * Progress tab (PROGRESS-1..5): weekly KPIs identical to the dashboard, the
- * exercise picker and the load series chart. Empty states: global (no session
- * at all) and per-exercise (no weighted sets), both with an a11y label.
+ * Tab de Progreso (PROGRESS-1..5): KPIs semanales idénticos a los del dashboard,
+ * el picker de ejercicios y el gráfico de serie de cargas. Estados vacíos:
+ * global (ninguna sesión) y por ejercicio (sin series con peso), ambos con
+ * etiqueta a11y.
  */
 export function ProgressScreen() {
   const { kpis, exercises, series, selectedExerciseId, setSelectedExerciseId, isLoading } =

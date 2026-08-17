@@ -12,9 +12,10 @@ const sqlite = openDatabaseSync(DATABASE_NAME);
 export const db = drizzle(sqlite, { schema });
 
 /**
- * Bootstrap the local database. Call once at app startup, before any
- * query/mutation is executed through the repository layer. Applies the schema
- * and seeds the exercise catalog (idempotent) so the app never starts empty.
+ * Inicializa la base de datos local. Llamar una sola vez al arrancar la app,
+ * antes de ejecutar cualquier consulta/mutación a través de la capa de
+ * repositorios. Aplica el esquema y siembra el catálogo de ejercicios
+ * (idempotente) para que la app nunca arranque vacía.
  */
 export function bootstrapDatabase(): void {
   runMigrations(sqlite);

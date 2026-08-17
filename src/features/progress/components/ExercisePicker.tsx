@@ -11,9 +11,10 @@ type ExercisePickerProps = {
 };
 
 /**
- * Horizontal chips with the exercises that have sessions (PROGRESS-2/5). Each
- * chip exposes a per-exercise accessibility label. When no exercise has
- * sessions it renders nothing — the global empty state is the screen's job.
+ * Chips horizontales con los ejercicios que tienen sesiones (PROGRESS-2/5). Cada
+ * chip expone una etiqueta de accesibilidad por ejercicio. Cuando ningún
+ * ejercicio tiene sesiones no renderiza nada — el estado vacío global es
+ * responsabilidad de la pantalla.
  */
 export function ExercisePicker({ exercises, selectedId, onSelect }: ExercisePickerProps) {
   if (exercises.length === 0) {

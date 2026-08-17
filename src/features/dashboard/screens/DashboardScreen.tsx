@@ -16,9 +16,9 @@ type DashboardNavigation = NavigationProp<
 >;
 
 /**
- * Real dashboard home (DASHBOARD-4/5/6): weekly KPIs plus the animated streak
- * badge once there is at least one completed workout, otherwise an empty
- * state that guides the user to create their first routine.
+ * Home real del dashboard (DASHBOARD-4/5/6): KPIs semanales más la insignia de
+ * racha animada una vez que existe al menos un entrenamiento completado; en
+ * caso contrario, un estado vacío que guía al usuario a crear su primera rutina.
  */
 export function DashboardScreen() {
   const navigation = useNavigation<DashboardNavigation>();

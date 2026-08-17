@@ -11,7 +11,7 @@ type SeedExercise = {
 };
 
 const CATALOG: SeedExercise[] = [
-  // Chest
+  // Pecho
   { name: 'Press de banca', muscleGroup: 'chest', equipment: 'barbell' },
   { name: 'Press de banca inclinado', muscleGroup: 'chest', equipment: 'barbell' },
   { name: 'Press de banca con mancuernas', muscleGroup: 'chest', equipment: 'dumbbell' },
@@ -19,7 +19,7 @@ const CATALOG: SeedExercise[] = [
   { name: 'Aperturas de pecho', muscleGroup: 'chest', equipment: 'machine' },
   { name: 'Cruces en polea', muscleGroup: 'chest', equipment: 'cable' },
   { name: 'Flexiones', muscleGroup: 'chest', equipment: 'bodyweight' },
-  // Back
+  // Espalda
   { name: 'Peso muerto', muscleGroup: 'back', equipment: 'barbell' },
   { name: 'Remo con barra', muscleGroup: 'back', equipment: 'barbell' },
   { name: 'Remo con mancuernas', muscleGroup: 'back', equipment: 'dumbbell' },
@@ -28,7 +28,7 @@ const CATALOG: SeedExercise[] = [
   { name: 'Dominadas', muscleGroup: 'back', equipment: 'bodyweight' },
   { name: 'Dominadas supinas', muscleGroup: 'back', equipment: 'bodyweight' },
   { name: 'Remo al rostro', muscleGroup: 'back', equipment: 'cable' },
-  // Legs
+  // Piernas
   { name: 'Sentadilla', muscleGroup: 'legs', equipment: 'barbell' },
   { name: 'Sentadilla frontal', muscleGroup: 'legs', equipment: 'barbell' },
   { name: 'Prensa de piernas', muscleGroup: 'legs', equipment: 'machine' },
@@ -39,14 +39,14 @@ const CATALOG: SeedExercise[] = [
   { name: 'Sentadilla búlgara', muscleGroup: 'legs', equipment: 'dumbbell' },
   { name: 'Elevación de talones de pie', muscleGroup: 'legs', equipment: 'machine' },
   { name: 'Empuje de cadera', muscleGroup: 'legs', equipment: 'barbell' },
-  // Shoulders
+  // Hombros
   { name: 'Press militar', muscleGroup: 'shoulders', equipment: 'barbell' },
   { name: 'Press de hombros sentado con mancuernas', muscleGroup: 'shoulders', equipment: 'dumbbell' },
   { name: 'Elevaciones laterales', muscleGroup: 'shoulders', equipment: 'dumbbell' },
   { name: 'Elevaciones frontales', muscleGroup: 'shoulders', equipment: 'dumbbell' },
   { name: 'Aperturas de deltoides posteriores', muscleGroup: 'shoulders', equipment: 'machine' },
   { name: 'Elevación lateral en polea', muscleGroup: 'shoulders', equipment: 'cable' },
-  // Arms
+  // Brazos
   { name: 'Curl con barra', muscleGroup: 'arms', equipment: 'barbell' },
   { name: 'Curl con mancuernas', muscleGroup: 'arms', equipment: 'dumbbell' },
   { name: 'Curl martillo', muscleGroup: 'arms', equipment: 'dumbbell' },
@@ -55,7 +55,7 @@ const CATALOG: SeedExercise[] = [
   { name: 'Press francés', muscleGroup: 'arms', equipment: 'barbell' },
   { name: 'Fondos', muscleGroup: 'arms', equipment: 'bodyweight' },
   { name: 'Curl concentrado', muscleGroup: 'arms', equipment: 'dumbbell' },
-  // Core
+  // Abdominales
   { name: 'Plancha', muscleGroup: 'core', equipment: 'bodyweight' },
   { name: 'Elevación de piernas colgado', muscleGroup: 'core', equipment: 'bodyweight' },
   { name: 'Giros rusos', muscleGroup: 'core', equipment: 'bodyweight' },
@@ -64,10 +64,11 @@ const CATALOG: SeedExercise[] = [
 ];
 
 /**
- * Former English catalog names mapped to their current Spanish names. Used to
- * migrate installations seeded before the catalog was translated so that the
- * exercise templates keep their id (and therefore all FK references from
- * routines/workouts keep working) while displaying Spanish names.
+ * Nombres del catálogo anterior en inglés mapeados a sus nombres actuales en
+ * español. Se usa para migrar instalaciones sembradas antes de que el catálogo
+ * fuera traducido, de modo que los templates de ejercicios conserven su id (y
+ * por lo tanto todas las referencias FK de rutinas/entrenamientos sigan
+ * funcionando) mientras muestran nombres en español.
  */
 const LEGACY_CATALOG_NAMES: Record<string, string> = {
   'Bench Press': 'Press de banca',
@@ -117,11 +118,12 @@ const LEGACY_CATALOG_NAMES: Record<string, string> = {
 };
 
 /**
- * One-time migration for installations that already have the catalog stored
- * with the former English names. For each legacy name, if a row with the new
- * Spanish name does not exist yet and a row with the legacy name does, the
- * existing row is renamed (keeping its id so FK references are preserved).
- * Idempotent: once a Spanish name exists, nothing is touched on later runs.
+ * Migración única para instalaciones que ya tienen el catálogo guardado con los
+ * nombres anteriores en inglés. Por cada nombre legacy, si todavía no existe una
+ * fila con el nuevo nombre en español y sí existe una con el nombre legacy, la
+ * fila existente se renombra (conservando su id para que las referencias FK se
+ * preserven). Idempotente: una vez que existe el nombre en español, en ejecuciones
+ * posteriores no se toca nada.
  */
 function migrateLegacyCatalogNames(
   db: ExpoSQLiteDatabase<typeof schema>,
@@ -150,10 +152,10 @@ function migrateLegacyCatalogNames(
 }
 
 /**
- * Seed the exercise template catalog. Idempotent: rows are inserted only when
- * the exercise name does not already exist, and legacy English rows are
- * migrated to their Spanish names first. Synchronous because the expo-sqlite
- * Drizzle driver is synchronous; called once during `bootstrapDatabase()`.
+ * Siembra el catálogo de templates de ejercicios. Idempotente: las filas solo se
+ * insertan cuando el nombre del ejercicio todavía no existe, y las filas legacy
+ * en inglés se migran primero a sus nombres en español. Síncrono porque el driver
+ * Drizzle de expo-sqlite es síncrono; se llama una vez durante `bootstrapDatabase()`.
  */
 export function seedExerciseCatalog(
   db: ExpoSQLiteDatabase<typeof schema>,

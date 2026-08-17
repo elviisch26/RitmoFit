@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
+import type { Goal } from '@/database/schema';
 import type { MuscleGroup } from '@/features/exercises/types';
+import { GOALS } from '@/shared/constants';
 
 export type WorkoutsStackParamList = {
   RoutinesList: undefined;
@@ -25,6 +27,7 @@ export type Routine = {
   id: number;
   name: string;
   note: string | null;
+  goal: Goal;
   createdAt: number;
   updatedAt: number;
   exercises: RoutineExercise[];
@@ -40,12 +43,14 @@ export type RoutineExerciseInput = {
 export type CreateRoutineInput = {
   name: string;
   note: string | null;
+  goal: Goal;
   exercises: RoutineExerciseInput[];
 };
 
 export type UpdateRoutineInput = {
   name?: string;
   note?: string | null;
+  goal?: Goal;
   exercises?: RoutineExerciseInput[];
 };
 
@@ -70,10 +75,12 @@ export const routineExerciseSchema = z.object({
 export const routineSchema = z.object({
   name: z.string().trim().min(3, 'El nombre debe tener al menos 3 caracteres.'),
   note: z.string().trim().max(500, 'La nota debe tener 500 caracteres o menos.').nullable().optional(),
+  goal: z.enum(GOALS, 'Selecciona un objetivo válido.').default('strength'),
   exercises: z.array(routineExerciseSchema).min(1, 'Agrega al menos un ejercicio.'),
 });
 
 export type RoutineFormValues = z.infer<typeof routineSchema>;
+export type RoutineFormInput = z.input<typeof routineSchema>;
 
 export type Workout = {
   id: number;

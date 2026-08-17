@@ -51,13 +51,13 @@ function toWorkoutSet(row: WorkoutSetRow): WorkoutSet {
   };
 }
 
-/** A single workout by id, if it exists. */
+/** Un entrenamiento por id, si existe. */
 export async function getWorkout(id: number): Promise<Workout | undefined> {
   const row = db.select().from(workoutSessions).where(eq(workoutSessions.id, id)).all()[0];
   return row ? toWorkout(row) : undefined;
 }
 
-/** All workouts ordered by start time, most recent first. */
+/** Todos los entrenamientos ordenados por hora de inicio, más reciente primero. */
 export async function listWorkouts(): Promise<Workout[]> {
   const rows = db
     .select()
@@ -68,8 +68,9 @@ export async function listWorkouts(): Promise<Workout[]> {
 }
 
 /**
- * Start a workout from a routine: creates the workout row plus one
- * work per exercise in one transaction. Returns the new workout id.
+ * Inicia un entrenamiento desde una rutina: crea la fila del entrenamiento más
+ * una fila por ejercicio en una sola transacción. Devuelve el id del nuevo
+ * entrenamiento.
  */
 export async function startWorkoutFromRoutine(routineId: number): Promise<number> {
   return db.transaction((tx) => {
@@ -144,7 +145,7 @@ function listSetsForWorkoutExercise(workoutExerciseId: number): WorkoutSet[] {
     .map(toWorkoutSet);
 }
 
-/** All exercises of a workout with their template details and sets. */
+/** Todos los ejercicios de un entrenamiento con sus detalles de template y sus series. */
 export async function getWorkoutExercises(workoutId: number): Promise<WorkoutExercise[]> {
   const rows = db
     .select({
@@ -170,7 +171,7 @@ export async function getWorkoutExercises(workoutId: number): Promise<WorkoutExe
   }));
 }
 
-/** Append a set to a workout exercise' list, using the next order index. */
+/** Agrega una serie a la lista de un ejercicio del entrenamiento, usando el siguiente order index. */
 export async function addSet(
   workoutExerciseId: number,
   input: AddSetInput,
@@ -205,19 +206,19 @@ export async function addSet(
   };
 }
 
-/** Update fields of an existing set. Returns whether a row was changed. */
+/** Actualiza los campos de una serie existente. Devuelve si se modificó alguna fila. */
 export async function updateSet(setId: number, input: UpdateSetInput): Promise<boolean> {
   const result = db.update(sets).set(input).where(eq(sets.id, setId)).run();
   return result.changes > 0;
 }
 
-/** Delete a set. Returns whether a row was removed. */
+/** Elimina una serie. Devuelve si se eliminó alguna fila. */
 export async function deleteSet(setId: number): Promise<boolean> {
   const result = db.delete(sets).where(eq(sets.id, setId)).run();
   return result.changes > 0;
 }
 
-/** Mark a workout as completed and return the updated workout. */
+/** Marca un entrenamiento como completado y devuelve el entrenamiento actualizado. */
 export async function completeWorkout(workoutId: number): Promise<Workout | undefined> {
   const result = db
     .update(workoutSessions)
@@ -232,7 +233,7 @@ export async function completeWorkout(workoutId: number): Promise<Workout | unde
   return getWorkout(workoutId);
 }
 
-/** Delete a workout; the exercises and sets cascade. */
+/** Elimina un entrenamiento; los ejercicios y las series se borran en cascada. */
 export async function deleteWorkout(workoutId: number): Promise<boolean> {
   const result = db.delete(workoutSessions).where(eq(workoutSessions.id, workoutId)).run();
   return result.changes > 0;

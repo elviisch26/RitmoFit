@@ -7,10 +7,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { bootstrapDatabase } from '@/database/client';
 import { colors } from '@/shared/theme';
 
-// React Navigation defaults to a light theme (white background) unless a theme
-// is provided. Without one, every screen transition flashes white before the
-// screen content renders. This dark theme keeps the container, cards, and
-// headers aligned with the app palette.
+// React Navigation usa por defecto un tema claro (fondo blanco) a menos que se
+// provea uno. Sin tema, cada transición de pantalla parpadea en blanco antes de
+// renderizar el contenido. Este tema oscuro mantiene el contenedor, las tarjetas
+// y los encabezados alineados con la paleta de la app.
 const navigationTheme: Theme = {
   ...DarkTheme,
   colors: {

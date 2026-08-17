@@ -18,6 +18,7 @@ import {
 
 import { db } from '@/database/client';
 import { seedExerciseCatalog } from '@/database/seed';
+import { seedExampleRoutines } from '../repository/routinesRepository';
 
 const STARTED_AT = Date.UTC(2026, 0, 1, 10, 0, 0);
 const COMPLETED_AT = Date.UTC(2026, 0, 1, 11, 30, 0);
@@ -275,5 +276,88 @@ describe('seedExerciseCatalog', () => {
     const params = inserts[0].params as unknown[];
     expect(params).toContain('Press de banca');
     expect(params).toContain('Flexiones');
+  });
+});
+
+describe('seedExampleRoutines', () => {
+  const TEMPLATE_ROWS = [
+    [1, 'Sentadilla'],
+    [2, 'Press de banca'],
+    [3, 'Remo con barra'],
+    [4, 'Plancha'],
+    [5, 'Press militar'],
+    [6, 'Fondos'],
+    [7, 'Extensión de tríceps en polea'],
+    [8, 'Dominadas'],
+    [9, 'Jalón al pecho'],
+    [10, 'Curl con barra'],
+  ];
+
+  beforeEach(() => {
+    expoSqliteMock.reset();
+  });
+
+  it('inserts the three example routines and resolves templates by name', async () => {
+    expoSqliteMock.rule({ match: /from "exercise_templates"/, rows: TEMPLATE_ROWS });
+    expoSqliteMock.rule({ match: /from "routines"/, rows: [] });
+    expoSqliteMock.rule({ match: /insert into "routines"/, rows: [[1]] });
+    expoSqliteMock.rule({ match: /insert into "routine_exercises"/, changes: 12 });
+
+    const inserted = await seedExampleRoutines();
+
+    expect(inserted).toBe(3);
+
+    const routineInserts = expoSqliteMock.callsMatching(/insert into "routines"/);
+    expect(routineInserts).toHaveLength(3);
+    // Los dos últimos params son created_at/updated_at (timestamps); se validan
+    // solo los tres primeros para no depender de la hora exacta.
+    expect(routineInserts[0].params.slice(0, 3)).toEqual(['Full Body', null, 'strength']);
+    expect(routineInserts[1].params.slice(0, 3)).toEqual(['Push', null, 'hypertrophy']);
+    expect(routineInserts[2].params.slice(0, 3)).toEqual(['Pull', null, 'hypertrophy']);
+
+    const exerciseInserts = expoSqliteMock.callsMatching(/insert into "routine_exercises"/);
+    expect(exerciseInserts).toHaveLength(3);
+    const fullBodyParams = exerciseInserts[0].params as unknown[];
+    expect(fullBodyParams).toContain(4);
+    expect(fullBodyParams).toContain(30);
+  });
+
+  it('does not duplicate routines that already exist', async () => {
+    expoSqliteMock.rule({ match: /from "exercise_templates"/, rows: TEMPLATE_ROWS });
+    expoSqliteMock.rule({ match: /from "routines"/, rows: [] });
+    expoSqliteMock.rule({ match: /insert into "routines"/, rows: [[1]] });
+    expoSqliteMock.rule({ match: /insert into "routine_exercises"/, changes: 12 });
+
+    await expect(seedExampleRoutines()).resolves.toBe(3);
+
+    expoSqliteMock.reset();
+
+    expoSqliteMock.rule({ match: /from "exercise_templates"/, rows: TEMPLATE_ROWS });
+    expoSqliteMock.rule({ match: /from "routines"/, rows: [[1], [2], [3]] });
+    expoSqliteMock.rule({ match: /insert into "routines"/, rows: [[1]] });
+    expoSqliteMock.rule({ match: /insert into "routine_exercises"/, changes: 12 });
+
+    const inserted = await seedExampleRoutines();
+
+    expect(inserted).toBe(0);
+    expect(expoSqliteMock.callsMatching(/insert into "routines"/)).toHaveLength(0);
+    expect(expoSqliteMock.callsMatching(/insert into "routine_exercises"/)).toHaveLength(0);
+  });
+
+  it('skips exercises whose template is missing from the catalog', async () => {
+    const rowsWithoutPlancha = TEMPLATE_ROWS.filter((row) => row[1] !== 'Plancha');
+    expoSqliteMock.rule({ match: /from "exercise_templates"/, rows: rowsWithoutPlancha });
+    expoSqliteMock.rule({ match: /from "routines"/, rows: [] });
+    expoSqliteMock.rule({ match: /insert into "routines"/, rows: [[1]] });
+    expoSqliteMock.rule({ match: /insert into "routine_exercises"/, changes: 11 });
+
+    const inserted = await seedExampleRoutines();
+
+    expect(inserted).toBe(3);
+
+    const fullBodyInsert = expoSqliteMock.callsMatching(/insert into "routine_exercises"/)[0];
+    // Full Body queda con 3 ejercicios (se omite Plancha): 3 filas x 6 columnas.
+    expect(fullBodyInsert.params).toHaveLength(18);
+    expect(fullBodyInsert.params).not.toContain(4);
   });
 });

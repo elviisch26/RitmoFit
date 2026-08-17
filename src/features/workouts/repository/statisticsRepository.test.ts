@@ -12,13 +12,13 @@ import {
   listExercisesWithSessions,
 } from './statisticsRepository';
 
-/** Local millis helper (avoids UTC drift in week-boundary assertions). */
+/** Helper de millis locales (evita la deriva UTC en las aserciones de límites de semana). */
 function at(year: number, month: number, day: number, hour = 12, minute = 0): number {
   return new Date(year, month - 1, day, hour, minute, 0, 0).getTime();
 }
 
-const NOW = new Date(2026, 0, 15, 10, 0, 0); // Thursday Jan 15 2026
-// Current week (Mon-Sun local): Mon Jan 12 -> Sun Jan 18 2026
+const NOW = new Date(2026, 0, 15, 10, 0, 0); // Jueves 15 de enero de 2026
+// Semana actual (lun-dom local): Lun 12 ene -> Dom 18 ene 2026
 
 describe('statisticsRepository', () => {
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('statisticsRepository', () => {
 
       expect(stats).toEqual({ workouts: 3, sets: 13, minutes: 180 });
 
-      // Week window must be LOCAL Monday 00:00 -> next Monday 00:00.
+      // La ventana semanal debe ser LOCALmente lunes 00:00 -> lunes siguiente 00:00.
       const call = expoSqliteMock.callsMatching(/count\("sets"\."id"\)/)[0];
       const params = call.params as number[];
       expect(params).toHaveLength(2);
@@ -51,7 +51,7 @@ describe('statisticsRepository', () => {
     });
 
     it('floors partial minutes of a session', async () => {
-      // 90 minutes and 30 seconds elapsing -> floor -> 90
+      // Transcurren 90 minutos y 30 segundos -> piso -> 90
       const partialEnd = new Date(2026, 0, 12, 10, 30, 30, 0).getTime();
       expoSqliteMock.rule({
         match: /count\("sets"\."id"\)/,
@@ -64,8 +64,8 @@ describe('statisticsRepository', () => {
     });
 
     it('bounds the week window to Monday so the previous Sunday never counts', async () => {
-      // The SQL engine applies the >= Monday / < next-Monday window; the mock
-      // returns post-filter rows, so only the Monday workout is present.
+      // El motor SQL aplica la ventana >= lunes / < lunes siguiente; el mock
+      // devuelve filas ya filtradas, por lo que solo está el entrenamiento del lunes.
       expoSqliteMock.rule({
         match: /count\("sets"\."id"\)/,
         rows: [[21, at(2026, 1, 12, 9), at(2026, 1, 12, 10), 3]],
@@ -149,7 +149,7 @@ describe('statisticsRepository', () => {
       ]);
 
       const call = expoSqliteMock.callsMatching(/max\("sets"\."weight_kg"\)/)[0];
-      expect(call.params[0]).toBe(1); // exercise id filter
+      expect(call.params[0]).toBe(1); // filtro por id de ejercicio
       expect(call.sql).toContain('group by');
       expect(call.sql).toMatch(/order by "workouts"\."completed_at"/);
     });

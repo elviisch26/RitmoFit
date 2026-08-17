@@ -10,9 +10,10 @@ import type { LoadPoint } from '../types';
 export type ExerciseOption = { id: number; name: string };
 
 /**
- * Thin wrapper over `statisticsRepository` (D1): Progress KPIs must be
- * identical to the dashboard (PROGRESS-1) and the load series/picker reuse
- * the aggregated queries so the SQL lives in exactly one place.
+ * Wrapper fino sobre `statisticsRepository` (D1): los KPIs de Progreso deben
+ * ser idénticos a los del dashboard (PROGRESS-1) y la serie de cargas/picker
+ * reutilizan las consultas agregadas para que el SQL viva en exactamente un
+ * solo lugar.
  */
 export function getProgressKpis(now: Date): Promise<WeeklyStats> {
   return getWeeklyStats(now);

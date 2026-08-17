@@ -14,7 +14,7 @@ const TEMPLATE_COLUMNS = {
   isBodyweight: exerciseTemplates.isBodyweight,
 } as const;
 
-/** All catalog templates ordered by name. */
+/** Todos los templates del catálogo ordenados por nombre. */
 export function listTemplates(): ExerciseTemplate[] {
   return db
     .select(TEMPLATE_COLUMNS)
@@ -23,7 +23,7 @@ export function listTemplates(): ExerciseTemplate[] {
     .all();
 }
 
-/** Templates filtered by muscle group, ordered by name. */
+/** Templates filtrados por grupo muscular, ordenados por nombre. */
 export function listTemplatesByMuscleGroup(muscleGroup: MuscleGroup): ExerciseTemplate[] {
   return db
     .select(TEMPLATE_COLUMNS)
@@ -34,7 +34,8 @@ export function listTemplatesByMuscleGroup(muscleGroup: MuscleGroup): ExerciseTe
 }
 
 /**
- * Distinct muscle groups present in the catalog, in canonical display order.
+ * Grupos musculares distintos presentes en el catálogo, en el orden canónico de
+ * visualización.
  */
 export function listMuscleGroups(): MuscleGroup[] {
   const rows = db

@@ -10,9 +10,9 @@ type StreakBadgeProps = {
 };
 
 /**
- * Animated streak badge (DASHBOARD-3): entry animation with withTiming on
- * both opacity (0 -> 1) and scale (0.8 -> 1) over ~200ms. The accessibility
- * labels are always present, independent of the animation.
+ * Insignia de racha animada (DASHBOARD-3): animación de entrada con withTiming
+ * tanto en opacidad (0 -> 1) como en escala (0.8 -> 1) en ~200ms. Las etiquetas
+ * de accesibilidad siempre están presentes, independientemente de la animación.
  */
 export function StreakBadge({ current, best }: StreakBadgeProps) {
   const opacity = useSharedValue(0);

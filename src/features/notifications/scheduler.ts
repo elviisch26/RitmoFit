@@ -10,9 +10,10 @@ import { REMINDER_CONTENT } from './types';
 import type { ReminderType } from './types';
 
 /**
- * Adapter over expo-notifications (D6). Identifiers are deterministic per
- * reminder type (`reminder-<type>`) so the reconcile pass can always match a
- * type against its local pending schedule without extra metadata.
+ * Adaptador sobre expo-notifications (D6). Los identificadores son
+ * deterministas por tipo de recordatorio (`reminder-<type>`) para que el paso
+ * de reconciliación siempre pueda emparejar un tipo con su programación local
+ * pendiente sin metadatos adicionales.
  */
 
 export function reminderIdentifier(type: ReminderType): string {
@@ -21,7 +22,7 @@ export function reminderIdentifier(type: ReminderType): string {
 
 let androidChannelReady = false;
 
-/** Create the default Android channel once per process (REMINDERS-1 naming). */
+/** Crea el canal de Android por defecto una vez por proceso (nomenclatura REMINDERS-1). */
 async function ensureAndroidChannel(): Promise<void> {
   if (androidChannelReady) {
     return;
@@ -33,7 +34,7 @@ async function ensureAndroidChannel(): Promise<void> {
   androidChannelReady = true;
 }
 
-/** Schedule the single pending local notification for a reminder type. */
+/** Programa la única notificación local pendiente para un tipo de recordatorio. */
 export async function scheduleReminder(type: ReminderType, date: Date): Promise<void> {
   await ensureAndroidChannel();
   const content = REMINDER_CONTENT[type];
@@ -44,12 +45,12 @@ export async function scheduleReminder(type: ReminderType, date: Date): Promise<
   });
 }
 
-/** Cancel the pending local notification of a reminder type, if any. */
+/** Cancela la notificación local pendiente de un tipo de recordatorio, si existe. */
 export async function cancelScheduledReminder(type: ReminderType): Promise<void> {
   await Notifications.cancelScheduledNotificationAsync(reminderIdentifier(type));
 }
 
-/** Epoch millis of a DATE trigger, or null when it is not one. */
+/** Millis epoch de un trigger DATE, o null cuando no lo es. */
 function dateOfTrigger(trigger: unknown): number | null {
   if (trigger === null || typeof trigger !== 'object') {
     return null;
@@ -62,9 +63,10 @@ function dateOfTrigger(trigger: unknown): number | null {
 }
 
 /**
- * Boot reconciliation (REMINDERS-5): for every enabled type, if its pending
- * schedule is missing or its date already passed, cancel it, recompute the
- * next occurrence and persist the new date. Denied permission => no restore.
+ * Reconciliación al arranque (REMINDERS-5): por cada tipo habilitado, si su
+ * programación pendiente falta o su fecha ya pasó, se cancela, se recalcula la
+ * próxima ocurrencia y se persiste la nueva fecha. Permiso denegado => no se
+ * restaura nada.
  */
 export async function reconcileReminders(now: Date): Promise<void> {
   const permissions = await Notifications.getPermissionsAsync();
@@ -86,11 +88,12 @@ export async function reconcileReminders(now: Date): Promise<void> {
     );
     const scheduledAt = request ? dateOfTrigger(request.trigger) : null;
     if (scheduledAt !== null && scheduledAt > now.getTime()) {
-      continue; // schedule consistent -> no-op
+      continue; // cronograma consistente -> no-op
     }
 
-    // A stale pending exists only when a date was found; a missing identifier
-    // is recreated by scheduling with the same deterministic id (no OS dups).
+    // Un pendiente obsoleto solo existe cuando se encontró una fecha; un
+    // identificador ausente se recrea programando con el mismo id determinista
+    // (sin duplicados del SO).
     if (scheduledAt !== null) {
       await cancelScheduledReminder(config.type);
     }

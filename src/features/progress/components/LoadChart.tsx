@@ -10,13 +10,13 @@ type LoadChartProps = {
 };
 
 /**
- * Load series chart for the selected exercise (PROGRESS-4/5): a wrapper View
- * exposing the a11y label plus the LineChart configured with `curved`,
- * `isAnimated` and the " kg" y-axis suffix.
+ * Gráfico de serie de cargas para el ejercicio seleccionado (PROGRESS-4/5): un
+ * View envoltorio que expone la etiqueta a11y más el LineChart configurado con
+ * `curved`, `isAnimated` y el sufijo del eje y en " kg".
  *
- * (Deviation note) gifted-charts 1.4.77 exposes the suffix as
- * `yAxisLabelSuffix`, not `yAxisSuffix` as the spec suggests — this keeps
- * typecheck green and the runtime behavior identical.
+ * (Nota de desvío) gifted-charts 1.4.77 expone el sufijo como `yAxisLabelSuffix`,
+ * no como `yAxisSuffix` como sugiere la spec — esto mantiene el typecheck en
+ * verde y el comportamiento en runtime idéntico.
  */
 export function LoadChart({ exerciseName, points }: LoadChartProps) {
   return (

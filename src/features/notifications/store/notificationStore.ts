@@ -3,8 +3,9 @@ import { create } from 'zustand';
 import type { ReminderConfig } from '../types';
 
 /**
- * Reactive cache of reminder configs (D2). The database stays the source of
- * truth; this store only mirrors the last snapshot for instant UI reads.
+ * Caché reactiva de las configuraciones de recordatorios (D2). La base de datos
+ * sigue siendo la fuente de verdad; este store solo refleja la última snapshot
+ * para lecturas instantáneas de la UI.
  */
 type NotificationState = {
   reminders: ReminderConfig[];

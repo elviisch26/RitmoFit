@@ -6,13 +6,14 @@ import {
   duplicateRoutine,
   getRoutine,
   listRoutines,
+  seedExampleRoutines,
   updateRoutine,
 } from '../repository/routinesRepository';
 import type { CreateRoutineInput, UpdateRoutineInput } from '../types';
 
 const ROUTINES_KEY = ['routines'] as const;
 
-/** All routines with their embedded exercises. */
+/** Todas las rutinas con sus ejercicios embebidos. */
 export function useRoutines() {
   return useQuery({
     queryKey: ROUTINES_KEY,
@@ -20,7 +21,7 @@ export function useRoutines() {
   });
 }
 
-/** A single routine by id; disabled when no id is provided. */
+/** Una rutina por id; deshabilitado cuando no se provee id. */
 export function useGetRoutine(id: number | undefined) {
   return useQuery({
     queryKey: [...ROUTINES_KEY, id],
@@ -58,6 +59,15 @@ export function useDuplicateRoutine() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => duplicateRoutine(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ROUTINES_KEY }),
+  });
+}
+
+/** Carga las rutinas de ejemplo bajo demanda y refresca la lista. */
+export function useSeedExampleRoutines() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: seedExampleRoutines,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ROUTINES_KEY }),
   });
 }

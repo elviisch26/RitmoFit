@@ -1,6 +1,6 @@
 export type StreakResult = { current: number; best: number };
 
-/** Local calendar-day key (YYYY-MM-DD). Never UTC: toISOString would shift days. */
+/** Clave local de día calendario (AAAA-MM-DD). Nunca UTC: toISOString desplazaría los días. */
 function localDayKey(ms: number): string {
   const date = new Date(ms);
   const year = date.getFullYear();
@@ -16,8 +16,8 @@ function isConsecutiveDay(prevDay: string, nextDay: string): boolean {
 }
 
 /**
- * Pure streak computation. Uses local dates and an injected clock so the
- * "counts through yesterday" rule is testable without timezone dependence.
+ * Cálculo puro de racha. Usa fechas locales y un reloj inyectado para que la
+ * regla de "cuenta hasta ayer" sea testeable sin depender de la zona horaria.
  */
 export function computeStreak(completedAtMs: readonly number[], now: Date): StreakResult {
   const days = [...new Set(completedAtMs.map(localDayKey))].sort();

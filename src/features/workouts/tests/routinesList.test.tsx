@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 
@@ -13,6 +13,7 @@ jest.mock('@/features/workouts/repository/routinesRepository', () => ({
   updateRoutine: jest.fn(),
   deleteRoutine: jest.fn(),
   duplicateRoutine: jest.fn(),
+  seedExampleRoutines: jest.fn(),
 }));
 
 jest.mock('@/features/workouts/repository/workoutsRepository', () => ({
@@ -42,10 +43,14 @@ jest.mock('@react-navigation/native', () => {
 import {
   deleteRoutine,
   listRoutines,
+  seedExampleRoutines,
 } from '@/features/workouts/repository/routinesRepository';
 
 const mockListRoutines = listRoutines as jest.MockedFunction<typeof listRoutines>;
 const mockDeleteRoutine = deleteRoutine as jest.MockedFunction<typeof deleteRoutine>;
+const mockSeedExampleRoutines = seedExampleRoutines as jest.MockedFunction<
+  typeof seedExampleRoutines
+>;
 
 const mockNavigate = jest.fn();
 
@@ -64,6 +69,7 @@ const pushDay: Routine = {
   id: 1,
   name: 'Push Day',
   note: null,
+  goal: 'strength',
   createdAt: 0,
   updatedAt: 0,
   exercises: [
@@ -76,6 +82,7 @@ const legDay: Routine = {
   id: 2,
   name: 'Leg Day',
   note: 'Hip position built into Strength Level',
+  goal: 'hypertrophy',
   createdAt: 0,
   updatedAt: 0,
   exercises: [
@@ -103,9 +110,10 @@ function renderRoutines() {
 describe('RoutinesScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRoutinesUiStore.setState({ searchPhrase: '', expandedRoutineId: null });
+    useRoutinesUiStore.setState({ searchPhrase: '', expandedRoutineId: null, goalFilter: 'all' });
     mockListRoutines.mockResolvedValue([pushDay, legDay]);
     mockDeleteRoutine.mockResolvedValue(true);
+    mockSeedExampleRoutines.mockResolvedValue(3);
   });
 
   it('renders routine rows with their exercise counts', async () => {
@@ -162,5 +170,32 @@ describe('RoutinesScreen', () => {
     deleteButton?.onPress?.();
 
     await waitFor(() => expect(mockDeleteRoutine).toHaveBeenCalledWith(1));
+  });
+
+  it('offers to seed example routines when the list is empty', async () => {
+    mockListRoutines.mockResolvedValue([]);
+
+    await renderRoutines();
+    await screen.findByText(/Aún no hay rutinas/i);
+
+    fireEvent.press(screen.getByText('Usar rutinas de ejemplo'));
+
+    await waitFor(() => expect(mockSeedExampleRoutines).toHaveBeenCalledTimes(1));
+  });
+
+  it('filters routines by goal and resets with the All chip', async () => {
+    const user = userEvent.setup();
+    await renderRoutines();
+    await screen.findByText('Push Day');
+
+    await user.press(screen.getByTestId('goal-filter-hypertrophy'));
+
+    expect(screen.queryByText('Push Day')).not.toBeOnTheScreen();
+    expect(screen.getByText('Leg Day')).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId('goal-filter-all'));
+
+    expect(screen.getByText('Push Day')).toBeOnTheScreen();
+    expect(screen.getByText('Leg Day')).toBeOnTheScreen();
   });
 });

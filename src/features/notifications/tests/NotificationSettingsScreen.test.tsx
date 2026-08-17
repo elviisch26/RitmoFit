@@ -100,7 +100,7 @@ describe('NotificationSettingsScreen (REMINDERS-1/3/4)', () => {
     expect(screen.getByRole('switch', { name: 'Hidratación' }).props.value).toBe(false);
     expect(screen.getByRole('switch', { name: 'Descanso' }).props.value).toBe(false);
 
-    // No schedule was created for any type.
+    // No se creó ninguna programación para ningún tipo.
     expect(mockedSchedule).not.toHaveBeenCalled();
   });
 
@@ -118,7 +118,7 @@ describe('NotificationSettingsScreen (REMINDERS-1/3/4)', () => {
       expect(mockedSchedule).toHaveBeenCalledWith('workout_reminder', expect.any(Date));
     });
 
-    // The row stays visually ON after the asynchronous permission flow.
+    // La fila permanece visualmente en ON después del flujo asincrónico de permisos.
     await waitFor(() => {
       expect(screen.getByRole('switch', { name: 'Entrenamiento' }).props.value).toBe(true);
     });
@@ -132,7 +132,7 @@ describe('NotificationSettingsScreen (REMINDERS-1/3/4)', () => {
     const switchEl = screen.getByRole('switch', { name: 'Entrenamiento' });
     await fireEvent(switchEl, 'valueChange', true);
 
-    // Warning + deep link are visible, toggle keeps the visual configured state.
+    // Advertencia + deep link visibles; el toggle conserva el estado visual configurado.
     await waitFor(() => {
       expect(
         screen.getByText('Las notificaciones están desactivadas en los ajustes del sistema'),
@@ -143,13 +143,13 @@ describe('NotificationSettingsScreen (REMINDERS-1/3/4)', () => {
       expect(screen.getByRole('switch', { name: 'Entrenamiento' }).props.value).toBe(true);
     });
 
-    // NO local schedule registered on denied.
+    // Sin programación local registrada con permiso denegado.
     expect(mockedSchedule).not.toHaveBeenCalled();
 
     await fireEvent.press(screen.getByRole('button', { name: 'Abrir ajustes' }));
     expect(openSettingsSpy).toHaveBeenCalled();
 
-    // The time field stays editable on denied.
+    // El campo de hora sigue siendo editable con permiso denegado.
     await fireEvent.press(screen.getByLabelText('Cambiar hora de Entrenamiento'));
     expect(screen.getByLabelText('Hora')).toBeOnTheScreen();
   });

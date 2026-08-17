@@ -21,8 +21,9 @@ jest.mock('expo-sqlite', () => ({
   }),
 }));
 
-// App boot runs the notification reconciler, which speaks to expo-notifications
-// (NOTI-10). jest.setup has no global mock, so this suite provides a local one.
+// El arranque de la app ejecuta el reconciliador de notificaciones, que habla con
+// expo-notifications (NOTI-10). jest.setup no tiene un mock global, por lo que
+// esta suite provee uno local.
 jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { DATE: 'date' },
   AndroidImportance: { DEFAULT: 5 },
@@ -34,8 +35,8 @@ jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: jest.fn(),
 }));
 
-// The boot reconciliation is wired in App.tsx; spy on the real module so the
-// assertion proves App actually invoked it (NOTI-10).
+// La reconciliación de arranque está conectada en App.tsx; se espía el módulo
+// real para que la aserción demuestre que App realmente lo invocó (NOTI-10).
 import * as Notifications from 'expo-notifications';
 
 import { reconcileReminders } from '@/features/notifications/scheduler';

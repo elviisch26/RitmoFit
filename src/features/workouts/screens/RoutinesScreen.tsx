@@ -7,21 +7,49 @@ import {
   Alert,
   FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 
+import { GOALS, GOAL_LABELS } from '@/shared/constants';
 import { colors, radii, spacing, typography } from '@/shared/theme';
 
-import { useDeleteRoutine, useDuplicateRoutine, useRoutines } from '../hooks/useRoutines';
+import {
+  useDeleteRoutine,
+  useDuplicateRoutine,
+  useRoutines,
+  useSeedExampleRoutines,
+} from '../hooks/useRoutines';
 import { useStartWorkoutFromRoutine } from '../hooks/useWorkouts';
 import { useRoutinesUiStore } from '../store/routinesUiStore';
 import type { Routine, WorkoutsStackParamList } from '../types';
 
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+type FilterChipProps = {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  testID: string;
+};
+
+function FilterChip({ label, selected, onPress, testID }: FilterChipProps) {
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      onPress={onPress}
+      style={[styles.chip, selected && styles.chipSelected]}
+    >
+      <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{label}</Text>
+    </Pressable>
+  );
 }
 
 type RoutineRowProps = {
@@ -126,10 +154,17 @@ export function RoutinesScreen() {
   const { data: routines, isLoading, isError } = useRoutines();
   const deleteMutation = useDeleteRoutine();
   const duplicateMutation = useDuplicateRoutine();
+  const seedRoutinesMutation = useSeedExampleRoutines();
   const startWorkoutMutation = useStartWorkoutFromRoutine();
 
-  const { searchPhrase, setSearchPhrase, expandedRoutineId, setExpandedRoutineId } =
-    useRoutinesUiStore();
+  const {
+    searchPhrase,
+    setSearchPhrase,
+    expandedRoutineId,
+    setExpandedRoutineId,
+    goalFilter,
+    setGoalFilter,
+  } = useRoutinesUiStore();
 
   useEffect(() => {
     navigation.setOptions({
@@ -156,9 +191,13 @@ export function RoutinesScreen() {
     });
   }, [navigation]);
 
-  const filtered = (routines ?? []).filter((routine) =>
-    routine.name.toLowerCase().includes(searchPhrase.trim().toLowerCase()),
-  );
+  const filtered = (routines ?? []).filter((routine) => {
+    const matchesPhrase = routine.name
+      .toLowerCase()
+      .includes(searchPhrase.trim().toLowerCase());
+    const matchesGoal = goalFilter === 'all' || routine.goal === goalFilter;
+    return matchesPhrase && matchesGoal;
+  });
 
   const handleDelete = (routine: Routine) => {
     Alert.alert('Eliminar rutina', `¿Eliminar "${routine.name}" definitivamente?`, [
@@ -182,10 +221,10 @@ export function RoutinesScreen() {
       </View>
     );
   } else if (filtered.length === 0) {
-    const emptyMessage =
-      (routines?.length ?? 0) === 0
-        ? 'Aún no hay rutinas.'
-        : 'Ninguna rutina coincide con tu búsqueda.';
+    const hasNoRoutines = (routines?.length ?? 0) === 0;
+    const emptyMessage = hasNoRoutines
+      ? 'Aún no hay rutinas.'
+      : 'Ninguna rutina coincide con tu búsqueda.';
     content = (
       <View style={styles.centered}>
         <Text style={styles.emptyText}>{emptyMessage}</Text>
@@ -197,43 +236,77 @@ export function RoutinesScreen() {
           <Ionicons name="add" size={20} color={colors.background} />
           <Text style={styles.addButtonLabel}>Nueva rutina</Text>
         </Pressable>
+        {hasNoRoutines ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Usar rutinas de ejemplo"
+            onPress={() => seedRoutinesMutation.mutate()}
+            style={styles.emptySeedButton}
+          >
+            <Ionicons name="sparkles-outline" size={18} color={colors.primary} />
+            <Text style={styles.seedButtonLabel}>Usar rutinas de ejemplo</Text>
+          </Pressable>
+        ) : null}
       </View>
     );
   } else {
     content = (
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <RoutineRow
-            routine={item}
-            expanded={expandedRoutineId === item.id}
-            onToggleExpand={() =>
-              setExpandedRoutineId(expandedRoutineId === item.id ? null : item.id)
-            }
-            onStart={() =>
-              startWorkoutMutation.mutate(item.id, {
-                onSuccess: (workoutId) =>
-                  navigation.navigate('WorkoutSession', { workoutId }),
-              })
-            }
-            onEdit={() => navigation.navigate('RoutineForm', { routineId: item.id })}
-            onDuplicate={() => duplicateMutation.mutate(item.id)}
-            onDelete={() => handleDelete(item)}
+      <View style={styles.listContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsRow}
+        >
+          <FilterChip
+            label="Todo"
+            testID="goal-filter-all"
+            selected={goalFilter === 'all'}
+            onPress={() => setGoalFilter('all')}
           />
-        )}
-        contentContainerStyle={styles.listContent}
-        ListFooterComponent={
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => navigation.navigate('RoutineForm')}
-            style={styles.addButton}
-          >
-            <Ionicons name="add" size={20} color={colors.background} />
-            <Text style={styles.addButtonLabel}>Nueva rutina</Text>
-          </Pressable>
-        }
-      />
+          {GOALS.map((goal) => (
+            <FilterChip
+              key={goal}
+              label={GOAL_LABELS[goal]}
+              testID={`goal-filter-${goal}`}
+              selected={goalFilter === goal}
+              onPress={() => setGoalFilter(goal)}
+            />
+          ))}
+        </ScrollView>
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <RoutineRow
+              routine={item}
+              expanded={expandedRoutineId === item.id}
+              onToggleExpand={() =>
+                setExpandedRoutineId(expandedRoutineId === item.id ? null : item.id)
+              }
+              onStart={() =>
+                startWorkoutMutation.mutate(item.id, {
+                  onSuccess: (workoutId) =>
+                    navigation.navigate('WorkoutSession', { workoutId }),
+                })
+              }
+              onEdit={() => navigation.navigate('RoutineForm', { routineId: item.id })}
+              onDuplicate={() => duplicateMutation.mutate(item.id)}
+              onDelete={() => handleDelete(item)}
+            />
+          )}
+          contentContainerStyle={styles.listContent}
+          ListFooterComponent={
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('RoutineForm')}
+              style={styles.addButton}
+            >
+              <Ionicons name="add" size={20} color={colors.background} />
+              <Text style={styles.addButtonLabel}>Nueva rutina</Text>
+            </Pressable>
+          }
+        />
+      </View>
     );
   }
 
@@ -259,6 +332,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  listContainer: {
+    flex: 1,
+  },
   searchRow: {
     paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
@@ -272,6 +348,31 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+  },
+  chipsRow: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  chip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  chipSelected: {
+    backgroundColor: colors.primaryMuted,
+    borderColor: colors.primary,
+  },
+  chipLabel: {
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    fontWeight: '600',
+  },
+  chipLabelSelected: {
+    color: colors.primary,
   },
   listContent: {
     padding: spacing.md,
@@ -385,6 +486,23 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     marginTop: spacing.md,
+  },
+  emptySeedButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.sm,
+  },
+  seedButtonLabel: {
+    color: colors.primary,
+    fontSize: typography.body,
+    fontWeight: '600',
   },
   emptyText: {
     color: colors.textMuted,

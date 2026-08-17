@@ -1,27 +1,27 @@
 import { computeStreak } from '../streak';
 
-/** Millis for a local date (midday by default to avoid DST edges). */
+/** Millis para una fecha local (mediodía por defecto para evitar bordes de DST). */
 function at(year: number, month: number, day: number, hour = 12): number {
   return new Date(year, month - 1, day, hour, 0, 0, 0).getTime();
 }
 
-const NOW = new Date(2026, 0, 15, 10, 0, 0); // Thursday January 15 2026 (local)
+const NOW = new Date(2026, 0, 15, 10, 0, 0); // Jueves 15 de enero de 2026 (local)
 
 describe('computeStreak', () => {
   it('counts the streak through yesterday when today has no workout', () => {
-    // Mon Jan 12, Tue Jan 13, Wed Jan 14 (input shuffled on purpose)
+    // Lun 12 ene, Mar 13 ene, Mié 14 ene (entrada desordenada a propósito)
     const result = computeStreak([at(2026, 1, 14), at(2026, 1, 12), at(2026, 1, 13)], NOW);
     expect(result).toEqual({ current: 3, best: 3 });
   });
 
   it('resets current to 0 when yesterday also had no workout', () => {
-    // Mon Jan 12 and Tue Jan 13 only; Wed Jan 14 empty; today Thu Jan 15 empty
+    // Solo Lun 12 ene y Mar 13 ene; Mié 14 ene vacío; hoy Jue 15 ene vacío
     const result = computeStreak([at(2026, 1, 12), at(2026, 1, 13)], NOW);
     expect(result).toEqual({ current: 0, best: 2 });
   });
 
   it('reports the historical best across separated streaks', () => {
-    // 5-day streak (Jan 5-9), 2-day streak (Jan 26-27), now = Feb 2
+    // Racha de 5 días (5-9 ene), racha de 2 días (26-27 ene), now = 2 feb
     const completions = [
       at(2026, 1, 9), at(2026, 1, 5), at(2026, 1, 6), at(2026, 1, 7), at(2026, 1, 8),
       at(2026, 1, 27), at(2026, 1, 26),
@@ -41,7 +41,7 @@ describe('computeStreak', () => {
   });
 
   it('handles the Sunday-to-Monday boundary using local dates', () => {
-    // Sun Jan 11 23:30 + Mon Jan 12 01:00 (local); now = Mon Jan 12 noon
+    // Dom 11 ene 23:30 + Lun 12 ene 01:00 (local); now = Lun 12 ene mediodía
     const completions = [at(2026, 1, 11, 23), at(2026, 1, 12, 1)];
     const now = new Date(2026, 0, 12, 12, 0, 0);
     expect(computeStreak(completions, now)).toEqual({ current: 2, best: 2 });
@@ -60,7 +60,7 @@ describe('computeStreak', () => {
 
   it('keeps counting a long streak that ends yesterday', () => {
     const completions = [at(2026, 1, 5), at(2026, 1, 6), at(2026, 1, 7), at(2026, 1, 8), at(2026, 1, 9)];
-    const now = new Date(2026, 0, 10, 12, 0, 0); // Sat Jan 10, no workout
+    const now = new Date(2026, 0, 10, 12, 0, 0); // Sáb 10 ene, sin entrenamiento
     expect(computeStreak(completions, now)).toEqual({ current: 5, best: 5 });
   });
 

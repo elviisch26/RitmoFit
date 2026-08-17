@@ -1,15 +1,16 @@
 import { create } from 'zustand';
 
 type ProgressGlobalState = {
-  /** Picker selection; `null` means no exercise has sessions yet (empty global). */
+  /** Selección del picker; `null` significa que ningún ejercicio tiene sesiones todavía (global vacío). */
   selectedExerciseId: number | null;
   setSelectedExerciseId: (id: number | null) => void;
 };
 
 /**
- * Minimal reactive cache for the Progress screen (S4): only the selected
- * exercise of the picker. The DB remains the source of truth; this state is
- * deliberately tiny (D2 — zustand only where a screen-local selection lives).
+ * Caché reactiva mínima para la pantalla de Progreso (S4): solo el ejercicio
+ * seleccionado del picker. La DB sigue siendo la fuente de verdad; este estado
+ * es deliberadamente pequeño (D2 — zustand solo donde vive una selección local
+ * de pantalla).
  */
 export const useProgressGlobalState = create<ProgressGlobalState>((set) => ({
   selectedExerciseId: null,

@@ -21,7 +21,7 @@ describe('TimePickerModal (NOTI-7)', () => {
       />,
     );
 
-    // Column labels per requirement + hour options 0..23 / minutes 0..55 step 15.
+    // Etiquetas de columna según requisito + opciones de hora 0..23 / minutos 0..55 paso 15.
     expect(screen.getByLabelText('Hora')).toBeOnTheScreen();
     expect(screen.getByLabelText('Minutos')).toBeOnTheScreen();
     expect(screen.getByLabelText('Hora 23')).toBeOnTheScreen();

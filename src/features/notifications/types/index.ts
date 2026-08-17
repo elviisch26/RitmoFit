@@ -1,21 +1,21 @@
-/** Reminder kinds supported by the settings panel (REMINDERS-1). */
+/** Tipos de recordatorio soportados por el panel de ajustes (REMINDERS-1). */
 export type ReminderType = 'workout_reminder' | 'hydration' | 'rest';
 
-/** Canonical order of the reminder types (declaration order = UI order). */
+/** Orden canónico de los tipos de recordatorio (orden de declaración = orden de UI). */
 export const REMINDER_TYPES: readonly ReminderType[] = [
   'workout_reminder',
   'hydration',
   'rest',
 ];
 
-/** Spanish labels shown in the settings panel (REMINDERS-1, neutral es). */
+/** Etiquetas en español mostradas en el panel de ajustes (REMINDERS-1, es neutro). */
 export const LABELS: Record<ReminderType, string> = {
   workout_reminder: 'Entrenamiento',
   hydration: 'Hidratación',
   rest: 'Descanso',
 };
 
-/** Title/body texts used on the local notification (REMINDERS-1/2). */
+/** Textos de título/cuerpo usados en la notificación local (REMINDERS-1/2). */
 export const REMINDER_CONTENT: Record<
   ReminderType,
   { title: string; body: string }
@@ -34,7 +34,7 @@ export const REMINDER_CONTENT: Record<
   },
 };
 
-/** Fallback time per type used when no row exists yet (REMINDERS-2). */
+/** Hora de respaldo por tipo usada cuando todavía no existe una fila (REMINDERS-2). */
 export const DEFAULT_REMINDER_TIME: Record<
   ReminderType,
   { hour: number; minute: number }
@@ -45,8 +45,9 @@ export const DEFAULT_REMINDER_TIME: Record<
 };
 
 /**
- * Runtime config of a reminder type, derived from its `notifications` row
- * (S2: the daily time comes from `scheduledFor`, no schema change).
+ * Configuración runtime de un tipo de recordatorio, derivada de su fila
+ * `notifications` (S2: la hora diaria sale de `scheduledFor`, sin cambio de
+ * esquema).
  */
 export type ReminderConfig = {
   type: ReminderType;

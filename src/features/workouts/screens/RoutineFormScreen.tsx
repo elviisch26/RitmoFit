@@ -19,6 +19,7 @@ import {
 
 import { useExerciseTemplates } from '@/features/exercises/hooks/useExerciseTemplates';
 import type { ExerciseTemplate } from '@/features/exercises/types';
+import { GOALS, GOAL_LABELS } from '@/shared/constants';
 import { colors, radii, spacing, typography } from '@/shared/theme';
 
 import { ExercisePickerModal } from '../components/ExercisePickerModal';
@@ -26,6 +27,7 @@ import { useCreateRoutine, useGetRoutine, useUpdateRoutine } from '../hooks/useR
 import {
   routineSchema,
   type Routine,
+  type RoutineFormInput,
   type RoutineFormValues,
   type WorkoutsStackParamList,
 } from '../types';
@@ -34,6 +36,7 @@ function toFormValues(routine: Routine): RoutineFormValues {
   return {
     name: routine.name,
     note: routine.note,
+    goal: routine.goal,
     exercises: routine.exercises.map((exercise) => ({
       exerciseTemplateId: exercise.exerciseTemplateId,
       targetSets: exercise.targetSets,
@@ -70,8 +73,8 @@ function NumericField({ label, value, onChangeText, error }: NumericFieldProps) 
 }
 
 type NumericControllerProps = {
-  control: Control<RoutineFormValues>;
-  name: Path<RoutineFormValues>;
+  control: Control<RoutineFormInput>;
+  name: Path<RoutineFormInput>;
   label: string;
 };
 
@@ -89,6 +92,28 @@ function NumericController({ control, name, label }: NumericControllerProps) {
         />
       )}
     />
+  );
+}
+
+type GoalChipProps = {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+};
+
+function GoalChip({ label, selected, onPress }: GoalChipProps) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      accessibilityLabel={`Objetivo: ${label}`}
+      onPress={onPress}
+      style={[styles.goalChip, selected && styles.goalChipSelected]}
+    >
+      <Text style={[styles.goalChipLabel, selected && styles.goalChipLabelSelected]}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -110,11 +135,12 @@ export function RoutineFormScreen() {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<RoutineFormValues>({
+  } = useForm<RoutineFormInput>({
     resolver: zodResolver(routineSchema),
     defaultValues: {
       name: '',
       note: null,
+      goal: 'strength',
       exercises: [],
     },
   });
@@ -187,6 +213,7 @@ export function RoutineFormScreen() {
     const input = {
       name: values.name,
       note: values.note?.trim() || null,
+      goal: values.goal ?? 'strength',
       exercises: values.exercises.map((exercise) => ({
         exerciseTemplateId: exercise.exerciseTemplateId,
         targetSets: exercise.targetSets,
@@ -244,6 +271,24 @@ export function RoutineFormScreen() {
           )}
         />
 
+        <Text style={styles.label}>Objetivo</Text>
+        <Controller
+          control={control}
+          name="goal"
+          render={({ field: { value, onChange } }) => (
+            <View style={styles.goalRow}>
+              {GOALS.map((goal) => (
+                <GoalChip
+                  key={goal}
+                  label={GOAL_LABELS[goal]}
+                  selected={value === goal}
+                  onPress={() => onChange(goal)}
+                />
+              ))}
+            </View>
+          )}
+        />
+
         <Text style={styles.exercisesHeading}>Ejercicios</Text>
         {fields.map((field, index) => {
           const current = exercisesWatch?.[index];
@@ -282,17 +327,17 @@ export function RoutineFormScreen() {
                 <View style={styles.numericRow}>
                   <NumericController
                     control={control}
-                    name={`exercises.${index}.targetSets` as Path<RoutineFormValues>}
+                    name={`exercises.${index}.targetSets` as Path<RoutineFormInput>}
                     label="Series"
                   />
                   <NumericController
                     control={control}
-                    name={`exercises.${index}.targetReps` as Path<RoutineFormValues>}
+                    name={`exercises.${index}.targetReps` as Path<RoutineFormInput>}
                     label="Reps"
                   />
                   <NumericController
                     control={control}
-                    name={`exercises.${index}.restSeconds` as Path<RoutineFormValues>}
+                    name={`exercises.${index}.restSeconds` as Path<RoutineFormInput>}
                     label="Descanso (s)"
                   />
                 </View>
@@ -372,6 +417,31 @@ const styles = StyleSheet.create({
   noteInput: {
     minHeight: 72,
     textAlignVertical: 'top',
+  },
+  goalRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  goalChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  goalChipSelected: {
+    backgroundColor: colors.primaryMuted,
+    borderColor: colors.primary,
+  },
+  goalChipLabel: {
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    fontWeight: '600',
+  },
+  goalChipLabelSelected: {
+    color: colors.primary,
   },
   fieldError: {
     color: colors.danger,

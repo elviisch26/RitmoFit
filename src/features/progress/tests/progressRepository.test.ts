@@ -9,12 +9,12 @@ jest.mock('expo-sqlite', () => {
 
 import { getExerciseLoadSeries, getProgressKpis, listExerciseOptions } from '../repository/progressRepository';
 
-/** Local millis helper (avoids UTC drift in week-boundary assertions). */
+/** Helper de millis locales (evita la deriva UTC en las aserciones de límites de semana). */
 function at(year: number, month: number, day: number, hour = 12, minute = 0): number {
   return new Date(year, month - 1, day, hour, minute, 0, 0).getTime();
 }
 
-const NOW = new Date(2026, 0, 15, 10, 0, 0); // Thursday Jan 15 2026
+const NOW = new Date(2026, 0, 15, 10, 0, 0); // Jueves 15 de enero de 2026
 
 describe('progressRepository (PROG-1: thin wrapper over statisticsRepository)', () => {
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('progressRepository (PROG-1: thin wrapper over statisticsRepository)', 
     const options = await listExerciseOptions();
 
     expect(options).toEqual([{ id: 2, name: 'Press de banca' }]);
-    // Default selection rule: the first option with sessions is the default.
+    // Regla de selección por default: la primera opción con sesiones es el default.
     expect(options[0].name).toBe('Press de banca');
   });
 
@@ -71,7 +71,7 @@ describe('progressRepository (PROG-1: thin wrapper over statisticsRepository)', 
 
     expect(kpis).toEqual({ workouts: 3, sets: 13, minutes: 180 });
 
-    // The weekly window must be the same LOCAL Monday->Sunday used by the dashboard.
+    // La ventana semanal debe ser el mismo lunes->domingo LOCAL que usa el dashboard.
     const call = expoSqliteMock.callsMatching(/count\("sets"\."id"\)/)[0];
     expect(call.params).toEqual([at(2026, 1, 12, 0), at(2026, 1, 19, 0)]);
   });

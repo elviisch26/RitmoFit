@@ -6,7 +6,7 @@ import {
 } from '../repository/templatesRepository';
 import type { MuscleGroup } from '../types';
 
-/** All exercise templates in the catalog. */
+/** Todos los templates de ejercicio del catálogo. */
 export function useExerciseTemplates() {
   return useQuery({
     queryKey: ['exerciseTemplates'],
@@ -14,7 +14,7 @@ export function useExerciseTemplates() {
   });
 }
 
-/** Exercise templates filtered by muscle group. */
+/** Templates de ejercicio filtrados por grupo muscular. */
 export function useExerciseTemplatesByMuscleGroup(muscleGroup: MuscleGroup) {
   return useQuery({
     queryKey: ['exerciseTemplates', 'muscleGroup', muscleGroup],

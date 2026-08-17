@@ -40,9 +40,9 @@ const enabledWorkout: ReminderConfig = {
   enabled: true,
 };
 
-const TUE_14 = new Date(2026, 2, 17, 14, 0, 0); // now: Tuesday Mar 17 14:00 local
-const NEXT_DUE = new Date(2026, 2, 18, 12, 0, 0); // resolveNextOccurrence(12:00, now=Mar 17 14:00)
-const ALREADY_PASSED = new Date(2026, 2, 17, 10, 0, 0); // before now
+const TUE_14 = new Date(2026, 2, 17, 14, 0, 0); // now: martes 17 mar 14:00 local
+const NEXT_DUE = new Date(2026, 2, 18, 12, 0, 0); // resolveNextOccurrence(12:00, now=17 mar 14:00)
+const ALREADY_PASSED = new Date(2026, 2, 17, 10, 0, 0); // antes de now
 
 const mockedSchedule = Notifications.scheduleNotificationAsync as jest.Mock;
 const mockedCancel = Notifications.cancelScheduledNotificationAsync as jest.Mock;
@@ -78,7 +78,7 @@ describe('notifications scheduler', () => {
       content: { title: workoutContent.title, body: workoutContent.body },
       trigger: { type: 'date', date: NEXT_DUE },
     });
-    // Android channel created once for the first schedule (REMINDERS-1 naming).
+    // El canal de Android se crea una sola vez para la primera programación (nomenclatura REMINDERS-1).
     expect(mockedChannel).toHaveBeenCalledWith(
       'default',
       expect.objectContaining({ name: 'Recordatorios' }),

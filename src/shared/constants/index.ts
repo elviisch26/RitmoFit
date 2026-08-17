@@ -2,6 +2,10 @@ export const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'shoulders', 'arms', 'cor
 
 export const EQUIPMENT = ['barbell', 'dumbbell', 'machine', 'bodyweight', 'cable'] as const;
 
+export const GOALS = ['strength', 'hypertrophy', 'cardio', 'endurance'] as const;
+
+export type Goal = (typeof GOALS)[number];
+
 export const MUSCLE_GROUP_LABELS: Record<(typeof MUSCLE_GROUPS)[number], string> = {
   chest: 'Pecho',
   back: 'Espalda',
@@ -17,4 +21,11 @@ export const EQUIPMENT_LABELS: Record<(typeof EQUIPMENT)[number], string> = {
   machine: 'Máquina',
   bodyweight: 'Peso corporal',
   cable: 'Polea',
+};
+
+export const GOAL_LABELS: Record<Goal, string> = {
+  strength: 'Fuerza',
+  hypertrophy: 'Hipertrofia',
+  cardio: 'Cardio',
+  endurance: 'Resistencia',
 };

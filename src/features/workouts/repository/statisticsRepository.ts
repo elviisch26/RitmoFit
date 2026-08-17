@@ -9,9 +9,9 @@ import {
 } from '@/database/schema';
 
 /**
- * Aggregate statistics over persisted workout data. A single source of
- * aggregated queries (D1): Dashboard and Progress both delegate here so KPIs
- * stay identical and the SQL stays in one place.
+ * Estadísticas agregadas sobre los datos de entrenamiento persistidos. Una sola
+ * fuente de consultas agregadas (D1): Dashboard y Progreso delegan aquí para
+ * que los KPIs se mantengan idénticos y el SQL quede en un solo lugar.
  */
 
 export type WeeklyStats = {
@@ -25,9 +25,9 @@ export type LoadPoint = {
   weightKg: number;
 };
 
-/** Monday 00:00 in the local timezone that contains `now`. */
+/** Lunes 00:00 en la zona horaria local que contiene `now`. */
 function startOfWeekLocal(now: Date): Date {
-  const daysSinceMonday = (now.getDay() + 6) % 7; // Sunday -> 6, Monday -> 0
+  const daysSinceMonday = (now.getDay() + 6) % 7; // domingo -> 6, lunes -> 0
   return new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday, 0, 0, 0, 0);
 }
 
@@ -39,10 +39,10 @@ function formatLocalDate(ms: number): string {
 }
 
 /**
- * KPI of the current local week (Monday-Sunday): completed workouts, total
- * sets and total minutes (floor of (completedAt - startedAt) / 60000).
- * Workouts with NULL completedAt never count; workouts without sets count
- * towards workouts/minutes but 0 sets.
+ * KPI de la semana local actual (lunes-domingo): entrenamientos completados,
+ * total de series y total de minutos (piso de (completedAt - startedAt) / 60000).
+ * Los entrenamientos con completedAt NULL nunca cuentan; los entrenamientos sin
+ * series cuentan para entrenamientos/minutos pero con 0 series.
  */
 export async function getWeeklyStats(now: Date): Promise<WeeklyStats> {
   const weekStart = startOfWeekLocal(now);
@@ -90,9 +90,9 @@ export async function getWeeklyStats(now: Date): Promise<WeeklyStats> {
 }
 
 /**
- * Millis of every completed workout (full history, chronological). Used to
- * compute the streak: "best" is the longest historical run, so it cannot be
- * scoped to the current week.
+ * Millis de cada entrenamiento completado (historial completo, cronológico). Se
+ * usa para calcular la racha: "best" es la racha histórica más larga, por lo
+ * que no puede limitarse a la semana actual.
  */
 export async function getWorkoutCompletedMs(): Promise<number[]> {
   const rows = db
@@ -108,10 +108,10 @@ export async function getWorkoutCompletedMs(): Promise<number[]> {
 }
 
 /**
- * Chronological load series for one exercise: one point per completed
- * workout, y = the max weight among sets with weightKg > 0. Bodyweight-only
- * sessions (weight 0) are filtered out by SQL, so a bodyweight exercise
- * yields no points instead of false zeros.
+ * Serie de cargas cronológica para un ejercicio: un punto por entrenamiento
+ * completado, y = el peso máximo entre las series con weightKg > 0. Las sesiones
+ * solo con peso corporal (peso 0) se filtran por SQL, por lo que un ejercicio
+ * de peso corporal no produce puntos en lugar de falsos ceros.
  */
 export async function getLoadSeries(exerciseId: number): Promise<LoadPoint[]> {
   const rows = db
@@ -141,8 +141,9 @@ export async function getLoadSeries(exerciseId: number): Promise<LoadPoint[]> {
 }
 
 /**
- * Exercise templates that have at least one completed session, ordered by
- * name (Spanish catalog). Ordered so the first entry is the default picker.
+ * Templates de ejercicio con al menos una sesión completada, ordenados por
+ * nombre (catálogo en español). Se ordenan para que la primera entrada sea el
+ * default del picker.
  */
 export async function listExercisesWithSessions(): Promise<{ id: number; name: string }[]> {
   const rows = db

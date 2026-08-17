@@ -6,9 +6,9 @@ import { useNotificationStore } from '../store/notificationStore';
 const NOTIFICATIONS_CONFIG_KEY = ['notifications', 'config'] as const;
 
 /**
- * Reminder config query (D2). Mirrors the fetched snapshot into the zustand
- * cache so the settings screen can read instantly while the DB stays the
- * source of truth.
+ * Consulta de la configuración de recordatorios (D2). Refleja la snapshot
+ * obtenida en la caché de zustand para que la pantalla de ajustes pueda leerla
+ * al instante mientras la DB sigue siendo la fuente de verdad.
  */
 export function useReminderConfig() {
   const syncFromDb = useNotificationStore((state) => state.syncFromDb);

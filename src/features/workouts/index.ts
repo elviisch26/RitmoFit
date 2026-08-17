@@ -10,6 +10,7 @@ export {
   useUpdateRoutine,
   useDeleteRoutine,
   useDuplicateRoutine,
+  useSeedExampleRoutines,
 } from './hooks/useRoutines';
 export {
   useWorkouts,

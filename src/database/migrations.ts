@@ -1,12 +1,12 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 /**
- * Idempotent schema bootstrap.
+ * Bootstrap del esquema idempotente.
  *
- * The Drizzle migration pipeline (drizzle-kit generate + bundled .sql files)
- * is the long-term target. For the current foundation the tables are created
- * inline with the exact same DDL that Drizzle would emit, so the runtime
- * schema always matches `src/database/schema.ts`.
+ * El pipeline de migraciones de Drizzle (drizzle-kit generate + archivos .sql
+ * empaquetados) es el objetivo a largo plazo. Para la base actual, las tablas
+ * se crean inline con exactamente el mismo DDL que Drizzle emitiría, de modo
+ * que el esquema en runtime siempre coincide con `src/database/schema.ts`.
  */
 const SCHEMA_SQL = `
 PRAGMA foreign_keys = ON;
@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS routines (
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   name TEXT NOT NULL,
   note TEXT,
+  goal TEXT NOT NULL DEFAULT 'strength',
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
@@ -125,9 +126,16 @@ CREATE INDEX IF NOT EXISTS routine_exercises_exercise_template_id_idx ON routine
 `;
 
 /**
- * Apply the schema. Safe to call multiple times; every statement is guarded
- * with IF NOT EXISTS.
+ * Aplica el esquema. Es seguro llamarlo varias veces; cada sentencia está
+ * protegida con IF NOT EXISTS.
  */
 export function runMigrations(db: SQLiteDatabase): void {
   db.execSync(SCHEMA_SQL);
+
+  // Instalaciones creadas antes de la columna `goal` no la tienen; se agrega
+  // de forma condicional para que el esquema real coincida con schema.ts.
+  const routineColumns = db.getAllSync<{ name: string }>('PRAGMA table_info(routines)');
+  if (!routineColumns.some((column) => column.name === 'goal')) {
+    db.execSync("ALTER TABLE routines ADD COLUMN goal TEXT NOT NULL DEFAULT 'strength'");
+  }
 }

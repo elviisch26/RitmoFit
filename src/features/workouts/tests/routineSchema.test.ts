@@ -21,6 +21,26 @@ describe('routineSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('applies the default goal when none is provided', () => {
+    const result = routineSchema.safeParse(validInput);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.goal).toBe('strength');
+    }
+  });
+
+  it('accepts every valid goal value', () => {
+    for (const goal of ['strength', 'hypertrophy', 'cardio', 'endurance'] as const) {
+      const result = routineSchema.safeParse({ ...validInput, goal });
+      expect(result.success).toBe(true);
+    }
+  });
+
+  it('rejects an invalid goal value', () => {
+    const result = routineSchema.safeParse({ ...validInput, goal: 'powerlifting' });
+    expect(result.success).toBe(false);
+  });
+
   it('rejects a name shorter than 3 characters', () => {
     expect(routineSchema.safeParse({ ...validInput, name: 'Ab' }).success).toBe(false);
     expect(routineSchema.safeParse({ ...validInput, name: '' }).success).toBe(false);

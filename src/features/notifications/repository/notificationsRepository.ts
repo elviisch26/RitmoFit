@@ -12,10 +12,10 @@ import {
 import type { ReminderConfig, ReminderType } from '../types';
 
 /**
- * Config source of truth: exactly one `notifications` row per type
- * (REMINDERS-2). The daily time is derived from the row's `scheduledFor`
- * (S2) so no schema change is required; rows are never deleted, disabling
- * only flips the status to `cancelled` (S3).
+ * Fuente de verdad de la configuración: exactamente una fila `notifications`
+ * por tipo (REMINDERS-2). La hora diaria se deriva de `scheduledFor` de la fila
+ * (S2) por lo que no se requiere cambio de esquema; las filas nunca se eliminan,
+ * deshabilitar solo cambia el estado a `cancelled` (S3).
  */
 
 function toConfig(row: typeof notifications.$inferSelect): ReminderConfig {
@@ -43,7 +43,7 @@ function defaultConfig(type: ReminderType): ReminderConfig {
   };
 }
 
-/** All reminder configs, one per type; missing rows fall back to defaults. */
+/** Todas las configuraciones de recordatorios, una por tipo; las filas faltantes usan los defaults. */
 export async function getReminderConfigs(): Promise<ReminderConfig[]> {
   const rows = db.select().from(notifications).all();
   const byType = new Map<ReminderType, ReminderConfig>();
@@ -53,7 +53,7 @@ export async function getReminderConfigs(): Promise<ReminderConfig[]> {
   return REMINDER_TYPES.map((type) => byType.get(type) ?? defaultConfig(type));
 }
 
-/** Upsert a reminder row as `scheduled` and return its stored occurrence. */
+/** Hace upsert de una fila de recordatorio como `scheduled` y devuelve su ocurrencia guardada. */
 function upsertScheduled(
   type: ReminderType,
   hour: number,
@@ -95,7 +95,7 @@ function upsertScheduled(
   return scheduledFor;
 }
 
-/** Turn a reminder on (REMINDERS-2): row → `scheduled` + next occurrence. */
+/** Enciende un recordatorio (REMINDERS-2): fila → `scheduled` + próxima ocurrencia. */
 export async function activateReminder(
   type: ReminderType,
   hour: number,
@@ -106,8 +106,8 @@ export async function activateReminder(
 }
 
 /**
- * Re-arm a reminder after a time change (REMINDERS-4): same upsert with a
- * freshly resolved occurrence.
+ * Re-arma un recordatorio tras un cambio de hora (REMINDERS-4): el mismo upsert
+ * con una ocurrencia recién resuelta.
  */
 export async function reactivateReminder(
   type: ReminderType,
@@ -118,7 +118,7 @@ export async function reactivateReminder(
   upsertScheduled(type, hour, minute, now);
 }
 
-/** Turn a reminder off (S3): row is kept, only the status flips. */
+/** Apaga un recordatorio (S3): la fila se conserva, solo cambia el estado. */
 export async function cancelReminder(type: ReminderType): Promise<void> {
   db.update(notifications)
     .set({ status: 'cancelled', updatedAt: new Date() })
@@ -126,7 +126,7 @@ export async function cancelReminder(type: ReminderType): Promise<void> {
     .run();
 }
 
-/** Persist a rescheduled occurrence after boot reconciliation (REMINDERS-5). */
+/** Persiste una ocurrencia reprogramada tras la reconciliación de arranque (REMINDERS-5). */
 export async function updateReminderScheduledFor(
   type: ReminderType,
   scheduledFor: Date,

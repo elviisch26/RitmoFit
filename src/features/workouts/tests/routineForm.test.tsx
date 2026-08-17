@@ -60,6 +60,7 @@ const existingRoutine: Routine = {
   id: 7,
   name: 'Push Day',
   note: null,
+  goal: 'strength',
   createdAt: 0,
   updatedAt: 0,
   exercises: [
@@ -165,6 +166,7 @@ it('selects an exercise and submits the create input', async () => {
       expect(mockCreateRoutine).toHaveBeenCalledWith({
         name: 'Push Day',
         note: null,
+        goal: 'strength',
         exercises: [
           { exerciseTemplateId: 1, targetSets: 3, targetReps: 10, restSeconds: 60 },
         ],
@@ -240,8 +242,37 @@ it('selects an exercise and submits the create input', async () => {
       expect(mockCreateRoutine).toHaveBeenCalledWith({
         name: 'Push Day',
         note: null,
+        goal: 'strength',
         exercises: [
           { exerciseTemplateId: 1, targetSets: 5, targetReps: 10, restSeconds: 60 },
+        ],
+      }),
+    );
+  });
+
+  it('renders the goal chips and submits the selected goal', async () => {
+    await renderForm();
+
+    expect(screen.getByText('Objetivo')).toBeOnTheScreen();
+    expect(screen.getByText('Fuerza')).toBeOnTheScreen();
+    expect(screen.getByText('Hipertrofia')).toBeOnTheScreen();
+    expect(screen.getByText('Cardio')).toBeOnTheScreen();
+    expect(screen.getByText('Resistencia')).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByText('Hipertrofia'));
+    await fireEvent.changeText(screen.getByLabelText('Nombre de la rutina'), 'Push Day');
+    await fireEvent.press(screen.getByText('Agregar ejercicio'));
+    await fireEvent.press(screen.getByLabelText('Seleccionar Press de banca'));
+
+    await fireEvent.press(screen.getByText('Crear rutina'));
+
+    await waitFor(() =>
+      expect(mockCreateRoutine).toHaveBeenCalledWith({
+        name: 'Push Day',
+        note: null,
+        goal: 'hypertrophy',
+        exercises: [
+          { exerciseTemplateId: 1, targetSets: 3, targetReps: 10, restSeconds: 60 },
         ],
       }),
     );

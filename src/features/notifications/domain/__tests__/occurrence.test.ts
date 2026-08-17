@@ -1,7 +1,7 @@
 import { resolveNextOccurrence } from '../occurrence';
 
 describe('resolveNextOccurrence', () => {
-  // Tuesday 2026-03-17, local time.
+  // Martes 17-03-2026, hora local.
   const TUE_14 = new Date(2026, 2, 17, 14, 0, 0);
   const TUE_10 = new Date(2026, 2, 17, 10, 0, 0);
   const TUE_12_EXACT = new Date(2026, 2, 17, 12, 0, 0);

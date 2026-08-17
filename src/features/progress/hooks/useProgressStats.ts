@@ -13,10 +13,11 @@ import { useProgressGlobalState } from '../store/useProgressGlobalState';
 const PROGRESS_KEY = ['progress'] as const;
 
 /**
- * Progress data for the tab (PROG-2): weekly KPIs (`['progress']`), the picker
- * options and the load series of the selected exercise (`['progress', id]`).
- * The picker defaults to the first exercise with sessions (S4). Refreshes on
- * tab focus by invalidating the `['progress']` prefix (D3).
+ * Datos de progreso para el tab (PROG-2): KPIs semanales (`['progress']`), las
+ * opciones del picker y la serie de cargas del ejercicio seleccionado
+ * (`['progress', id]`). El picker toma como default el primer ejercicio con
+ * sesiones (S4). Se refresca al ganar foco el tab invalidando el prefijo
+ * `['progress']` (D3).
  */
 export function useProgressStats() {
   const queryClient = useQueryClient();
@@ -43,8 +44,8 @@ export function useProgressStats() {
 
   const exercises: ExerciseOption[] = exercisesQuery.data ?? [];
 
-  // Default selection (S4): the first exercise with sessions becomes the
-  // picker default unless the user already chose one.
+  // Selección por default (S4): el primer ejercicio con sesiones pasa a ser el
+  // default del picker salvo que el usuario ya haya elegido uno.
   useEffect(() => {
     if (exercises.length > 0 && selectedExerciseId == null) {
       setSelectedExerciseId(exercises[0].id);

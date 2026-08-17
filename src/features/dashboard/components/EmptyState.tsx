@@ -9,8 +9,8 @@ type EmptyStateProps = {
 };
 
 /**
- * Empty dashboard state (DASHBOARD-4): message plus an optional CTA that
- * navigates the user to their first routine.
+ * Estado vacío del dashboard (DASHBOARD-4): mensaje más un CTA opcional que
+ * lleva al usuario a su primera rutina.
  */
 export function EmptyState({ title, ctaLabel, onCtaPress }: EmptyStateProps) {
   return (

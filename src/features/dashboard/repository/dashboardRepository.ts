@@ -10,8 +10,8 @@ export type DashboardSummary = WeeklyStats & {
 };
 
 /**
- * Thin wrapper (D1): aggregates the weekly KPIs and combines them with the
- * streak computed over the full completion history. No SQL lives here.
+ * Wrapper fino (D1): agrega los KPIs semanales y los combina con la racha
+ * calculada sobre el historial completo de entrenamientos. No hay SQL aquí.
  */
 export async function getDashboardSummary(now: Date): Promise<DashboardSummary> {
   const [stats, completedMs] = await Promise.all([getWeeklyStats(now), getWorkoutCompletedMs()]);

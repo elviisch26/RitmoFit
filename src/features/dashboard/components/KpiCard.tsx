@@ -9,9 +9,9 @@ type KpiCardProps = {
 };
 
 /**
- * Weekly KPI card. The explicit accessibilityLabel overrides the visible
- * texts for screen readers: "Entrenos: 3", "Series: 13", "Tiempo: 180 minutos"
- * (DASHBOARD-5).
+ * Tarjeta de KPI semanal. El accessibilityLabel explícito reemplaza los textos
+ * visibles para los lectores de pantalla: "Entrenos: 3", "Series: 13",
+ * "Tiempo: 180 minutos" (DASHBOARD-5).
  */
 export function KpiCard({ label, value, accessibilityLabel }: KpiCardProps) {
   return (
